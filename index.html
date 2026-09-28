@@ -1,0 +1,1485 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puntos de Contacto Usados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,600&family=Unbounded:wght@500;700;800;900&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --ink:#16181d; --ink-soft:#4a4c52; --paper:#f6f4ef; --surface:#ffffff;
+    --surface-2:#efece3; --line:#e2ddd2; --muted:#6f6a5e; --trust:#2f6b4f;
+    --warn:#a8611c; --warn-soft:#f5e8d8;
+    --shadow: 0 1px 2px rgba(22,24,29,.06), 0 8px 24px -12px rgba(22,24,29,.18);
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --ink:#f1efe9; --ink-soft:#c7c3b8; --paper:#15161a; --surface:#1d1f24;
+      --surface-2:#25272d; --line:#33353c; --muted:#9a968a; --trust:#5fbf95;
+      --warn:#e3a25c; --warn-soft:#332417;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --ink:#f1efe9; --ink-soft:#c7c3b8; --paper:#15161a; --surface:#1d1f24;
+    --surface-2:#25272d; --line:#33353c; --muted:#9a968a; --trust:#5fbf95;
+    --warn:#e3a25c; --warn-soft:#332417;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.6);
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--paper); color:var(--ink); font-family:"Sora",system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+  a{color:inherit;} button{font:inherit;}
+  /* per-brand typography — set --font-body/--font-display inline on .frame.site per dealer */
+  .frame.site{font-family:var(--font-body, "Sora"), system-ui, sans-serif;}
+  .frame.site .btn{font-family:var(--font-body, "Sora"), system-ui, sans-serif;}
+  .frame.site .campaign h2, .frame.site .logo-txt b{font-family:var(--font-display, var(--font-body, "Sora")), system-ui, sans-serif;}
+  @media (prefers-reduced-motion: reduce){*{transition:none !important; animation:none !important;}}
+
+  /* ---------- outer chrome ---------- */
+  .page-head{max-width:1180px; margin:0 auto; padding:28px 20px 18px;}
+  .eyebrow{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;}
+  .page-head h1{font-size:clamp(22px,4vw,32px); font-weight:800; margin:0 0 8px; letter-spacing:-.01em; text-wrap:balance;}
+  .page-head p{color:var(--ink-soft); max-width:70ch; margin:0 0 14px; line-height:1.55;}
+  .page-head .src{font-size:12.5px; color:var(--muted); margin:-4px 0 18px;}
+  .controls{display:flex; flex-direction:column; gap:12px; border-top:1px solid var(--line); padding-top:16px;}
+  .controls-row{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;}
+  .tabs{display:inline-flex; background:var(--surface-2); border-radius:999px; padding:4px; gap:4px; border:1px solid var(--line); flex-wrap:wrap;}
+  .tabs.sub{padding:3px; gap:3px;}
+  .tab-btn{border:none; background:transparent; color:var(--ink-soft); padding:9px 18px; border-radius:999px; font-weight:700; font-size:14px; cursor:pointer; white-space:nowrap;}
+  .tabs.sub .tab-btn{padding:7px 15px; font-size:13px;}
+  .tab-btn[aria-selected="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow);}
+  .annot-toggle{display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--ink-soft); cursor:pointer; user-select:none;}
+  .annot-toggle input{width:15px;height:15px;accent-color:var(--trust);}
+
+  .legend{max-width:1180px; margin:0 auto 8px; padding:0 20px;}
+  .legend[hidden]{display:none;}
+  .legend-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:8px 20px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; font-size:13px; color:var(--ink-soft);}
+  .legend-grid div{display:flex; gap:8px; align-items:baseline;}
+  .legend-num{flex:none; width:18px;height:18px; border-radius:50%; background:var(--trust); color:#fff; font-size:11px; font-weight:800; display:inline-flex; align-items:center; justify-content:center;}
+
+  .panel{max-width:1180px; margin:18px auto 60px; padding:0 20px;}
+  .panel[hidden]{display:none;}
+  .frame{border:1px solid var(--line); border-radius:20px; overflow:hidden; box-shadow:var(--shadow); background:#fff;}
+  .frame-bar{display:flex; gap:6px; padding:10px 14px; background:#f1efe6; border-bottom:1px solid #e5e1d6;}
+  .frame-bar span{width:9px;height:9px;border-radius:50%;background:#dcd7c9;}
+  .frame-url{margin-left:10px; font-size:12px; color:#8a8578; background:#fff; border:1px solid #e5e1d6; border-radius:6px; padding:3px 10px; flex:1; max-width:320px;}
+
+  .annot{position:relative; display:inline-flex; align-items:center; justify-content:center; width:20px;height:20px; border-radius:50%; background:var(--trust); color:#fff; font-size:11px; font-weight:800; flex:none;}
+  .annot[hidden]{display:none;}
+  .sec-note{font-size:12.5px; color:#8a8578; margin:-6px 0 14px; max-width:64ch; line-height:1.5;}
+  .sec-note[hidden]{display:none;}
+  .status-pill{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.03em; padding:5px 12px; border-radius:999px;}
+  .status-pill.review{background:var(--warn-soft); color:var(--warn);}
+  .status-pill.live{background:rgba(31,158,98,.14); color:#0b6b3d;}
+
+  /* ================= SITE (fixed light) ================= */
+  .site{
+    color-scheme:light; background:#fff; color:#111827;
+    --stone:#44403C; --g500:#6B7280; --g600:#4B5563; --g100:#F3F4F6; --g50:#FAFAFA; --border:#E5E7EB;
+    --r:8px; --r-card:16px; --r-btn:20px; --pill:9999px;
+    --sh:0 3px 6px rgba(20,20,19,.10);
+  }
+  .site .hl{font-weight:700; letter-spacing:-.03em; line-height:1.05; margin:0;}
+
+  /* ================= HOME-specific (ported from the Home concept) ================= */
+  .nav .cnt{background:var(--liq); color:#fff; font-size:10px; font-weight:700; padding:2px 7px; border-radius:var(--pill); margin-left:6px;}
+  .hdr-icons{display:flex; gap:16px; color:var(--brand);}
+
+  .ubar{background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; gap:22px; padding:0 24px; min-height:48px; flex-wrap:wrap; text-align:center;}
+  .utag{background:var(--liq); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:.1em; padding:5px 11px; border-radius:var(--pill); white-space:nowrap;}
+  .ubar .u-cta{background:#fff; color:var(--brand); font-size:11.5px; font-weight:700; letter-spacing:.03em; padding:8px 16px; border-radius:var(--r-btn); white-space:nowrap;}
+  .ubar span.u-copy{font-size:13px; font-weight:500;}
+
+  .hero-banner{height:150px; background:linear-gradient(120deg, var(--brand), var(--brand-2)); display:flex; align-items:center; justify-content:center; position:relative;}
+  .search-pill{width:min(640px,90%); height:50px; background:#fff; border-radius:var(--pill); display:flex; align-items:center; padding:0 20px; gap:10px; box-shadow:0 6px 18px rgba(0,0,0,.18);}
+  .search-pill span{font-size:14px; color:#9CA3AF;}
+  .tiles{padding:26px 28px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap; background:#fff;}
+  .tile-q{width:150px; height:120px; border-radius:16px; background:var(--g100); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; font-size:12.5px; font-weight:700; color:var(--g600); text-align:center;}
+  .tile-q.hot{background:var(--liq); color:#fff; position:relative;}
+  .tile-q.hot .flag{position:absolute; top:-10px; background:var(--brand); color:#fff; font-size:9.5px; font-weight:700; letter-spacing:.05em; padding:4px 10px; border-radius:var(--pill);}
+
+  .campaign{background:var(--brand); padding:44px 32px 34px; position:relative;}
+  .camp-top{display:flex; align-items:flex-end; justify-content:space-between; gap:40px; flex-wrap:wrap;}
+  .camp-eyebrow{display:flex; align-items:center; gap:9px; margin-bottom:14px;}
+  .camp-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--liq);}
+  .camp-eyebrow span{font-size:11.5px; font-weight:700; letter-spacing:.16em; color:var(--liq);}
+  .campaign h2{font-size:clamp(26px,3.4vw,42px); color:#fff; max-width:620px;}
+  .campaign h2 em{font-style:normal; color:var(--liq);}
+  .campaign p{font-size:15px; line-height:1.6; color:var(--on-surf); max-width:540px; margin:12px 0 0;}
+  .bono-panel{background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22); border-radius:var(--r-card); padding:20px 24px; display:flex; flex-direction:column; gap:6px; min-width:240px;}
+  .bono-panel .lbl{font-size:10.5px; font-weight:700; letter-spacing:.14em; color:var(--on-surf-lbl);}
+  .bono-panel .amt{display:flex; align-items:baseline; gap:3px;}
+  .bono-panel .amt b{font-size:38px; font-weight:800; color:var(--liq); letter-spacing:-.02em;}
+  .bono-panel .amt small{font-size:18px; font-weight:800; color:var(--liq);}
+  .bono-panel .note{font-size:12.5px; color:var(--on-surf); line-height:1.5;}
+  .progress-panel{margin-top:26px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22); border-radius:var(--r-card); padding:16px 22px; display:flex; align-items:center; gap:26px; flex-wrap:wrap;}
+  .progress-main{flex:1 1 260px; display:flex; flex-direction:column; gap:9px;}
+  .progress-main .row{display:flex; justify-content:space-between; align-items:baseline; font-size:13.5px; color:#fff; font-weight:500;}
+  .progress-main .row b{color:var(--liq); font-weight:700;}
+  .bar{height:9px; border-radius:var(--pill); background:rgba(255,255,255,.22); overflow:hidden;}
+  .bar>span{display:block; height:100%; background:var(--liq);}
+  .progress-side{display:flex; flex-direction:column; gap:2px;}
+  .progress-side b{font-size:22px; font-weight:700; color:#fff; line-height:1.2;}
+  .progress-side i{font-style:normal; font-size:11.5px; color:var(--on-surf-lbl);}
+
+  .lot{background:var(--g50); padding:30px 28px 46px; position:relative;}
+  .featured{background:#fff; border-radius:var(--r-card); box-shadow:var(--sh); padding:16px; display:flex; gap:20px; border:1.5px solid var(--promo); flex-wrap:wrap; position:relative;}
+  .fmedia{width:230px; height:150px; border-radius:12px; flex:none; position:relative; background:linear-gradient(135deg,#eee,#f7f7f7); display:flex; align-items:center; justify-content:center;}
+  .fmedia svg{width:60%; opacity:.55;}
+  .fbody{flex:1 1 220px; display:flex; flex-direction:column; gap:3px; min-width:200px;}
+  .tagrow{display:flex; gap:7px; margin-top:6px; flex-wrap:wrap;}
+  .pill-tag{font-size:11px; font-weight:600; padding:4px 10px; border-radius:var(--pill);}
+  .pill-tag.days{background:rgba(200,70,135,.12); color:var(--promo);}
+  .pill-tag.bono{background:rgba(31,158,98,.15); color:#0b6b3d;}
+  .pill-tag.views{background:var(--g100); color:var(--g600); display:inline-flex; align-items:center; gap:5px;}
+  .fprice{display:flex; flex-direction:column; align-items:flex-end; gap:6px; min-width:190px;}
+  .btn-buy{margin-top:4px; background:var(--brand); color:#fff; font-size:12px; font-weight:700; letter-spacing:.03em; padding:10px 22px; border-radius:var(--r-btn); border:none; cursor:pointer;}
+
+  .grid{margin-top:24px; display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:20px; position:relative;}
+  .card{background:#fff; border-radius:var(--r-card); box-shadow:var(--sh); overflow:hidden; display:flex; flex-direction:column;}
+  .cimg{position:relative; height:150px; background:linear-gradient(135deg,#eef0ea,#fff); display:flex; align-items:center; justify-content:center;}
+  .cimg svg{width:52%; opacity:.5;}
+  .badge{position:absolute; top:10px; left:10px; background:var(--liq); color:#fff; font-size:11px; font-weight:600; padding:4px 10px; border-radius:var(--pill);}
+  .badge.deep{background:var(--brand);}
+  .age{position:absolute; top:10px; right:10px; background:rgba(0,0,0,.55); color:#fff; font-size:10.5px; font-weight:600; padding:4px 9px; border-radius:var(--pill);}
+  .age.hot{background:var(--promo);}
+  .drop{position:absolute; left:0; right:0; bottom:0; background:linear-gradient(0deg, rgba(0,0,0,.7), rgba(0,0,0,0)); color:#fff; font-size:11.5px; font-weight:600; padding:8px 10px; display:flex; align-items:center; gap:6px;}
+  .cbody{padding:13px 15px 15px; display:flex; flex-direction:column; gap:5px;}
+  .loc{font-size:12px; color:var(--g500); display:flex; align-items:center; gap:5px;}
+  .prow{display:flex; align-items:flex-end; justify-content:space-between; gap:8px; margin-top:2px;}
+  .bono-tag{background:var(--g100); border-radius:var(--r); padding:5px 8px; text-align:center;}
+  .bono-tag i{display:block; font-style:normal; font-size:9.5px; color:var(--g600);}
+  .bono-tag b{display:block; font-size:11px; color:var(--g600);}
+  .ladder{display:flex; gap:3px; align-items:flex-end; height:16px; margin-top:6px;}
+  .ladder i{display:block; flex:1 1 0; min-width:0; border-radius:2px; background:#e5e7eb;}
+  .lbox{background:var(--g100); border-radius:var(--r); padding:8px 10px; display:flex; flex-direction:column; gap:5px; margin-top:2px;}
+  .lbox span{font-size:11px; font-weight:600; color:var(--brand);}
+  .cta{display:flex; gap:6px; margin-top:8px;}
+  .vermas{font-size:11.5px; font-weight:700; color:var(--brand); text-align:center; padding:5px 0 0;}
+  .sold{position:absolute; inset:0; background:rgba(0,0,0,.6); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;}
+  .sold b{font-size:22px; font-weight:800; color:#fff;}
+  .sold i{font-style:normal; font-size:11.5px; color:#e5e5e5;}
+
+  .close-cta{margin-top:30px; display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;}
+  .close-cta .main{background:var(--brand); color:#fff; font-size:15px; font-weight:700; padding:15px 32px; border-radius:var(--pill); display:inline-flex; align-items:center; gap:10px;}
+  .close-cta .sub{border:1.25px solid var(--brand); color:var(--brand); font-size:13px; font-weight:600; padding:14px 24px; border-radius:var(--pill);}
+
+  .chipset{display:flex; flex-wrap:wrap; gap:8px;}
+  .chipset .chip:first-child{background:var(--brand); color:#fff; border-color:var(--brand);}
+  .seo-cols{display:grid; grid-template-columns:1.1fr .9fr; gap:22px;}
+  @media (max-width:640px){.seo-cols{grid-template-columns:1fr;}}
+  .hublist{display:flex; flex-direction:column; gap:2px;}
+  .hublist a{display:flex; justify-content:space-between; padding:9px 4px; font-size:13px; font-weight:600; border-bottom:1px solid var(--border); text-decoration:none; color:#111827;}
+  .hublist a span{color:var(--g500); font-weight:500;}
+  .blogcard{border:1px solid var(--border); border-radius:12px; padding:14px; background:var(--g50);}
+  .blogcard .tag{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--brand); font-weight:700;}
+  .blogcard h4{margin:6px 0 4px; font-size:14px; color:#111827;}
+  .blogcard p{margin:0; font-size:12px; color:var(--g500); line-height:1.5;}
+
+  .hdr{height:64px; background:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 28px; border-bottom:1px solid var(--border); flex-wrap:wrap; gap:10px;}
+  .logo{display:flex; align-items:center; gap:9px;}
+  .logo-mark{width:28px;height:28px;border-radius:8px; background:var(--brand); flex:none; position:relative; overflow:hidden;}
+  .logo-mark::after{content:""; position:absolute; inset:7px; border-radius:3px; background:var(--liq);}
+  .logo-mark.mk-sais::after{inset:0; border-radius:0; clip-path:polygon(18% 88%, 50% 13%, 82% 88%, 50% 64%);}
+  .logo-mark.mk-portillo::after{inset:0; border-radius:0; background:repeating-linear-gradient(115deg, var(--liq) 0 3px, transparent 3px 8px);}
+  .logo-txt{line-height:1.05; position:relative; padding-left:10px;}
+  .logo-txt::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:2px; background:var(--rule, var(--brand));}
+  .logo-txt b{display:block; font-weight:800; font-size:14.5px; color:var(--brand); letter-spacing:-.01em;}
+  .logo-txt i{font-style:normal; font-size:9.5px; font-weight:700; letter-spacing:.14em; color:var(--g500);}
+  .nav{display:flex; align-items:center; gap:22px; font-size:13px; font-weight:600; color:var(--g600);}
+  .nav .cur{color:var(--brand); font-weight:700;}
+
+  .crumb{padding:12px 28px; font-size:12.5px; color:var(--g500); background:var(--g50); border-bottom:1px solid var(--border); display:flex; gap:6px; flex-wrap:wrap;}
+  .crumb b{color:var(--brand); font-weight:700;}
+
+  .sec{padding:26px 28px; border-top:1px solid var(--border);}
+  .sec:first-of-type{border-top:none;}
+  .sec-head{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap;}
+  .sec-head h3{font-size:15.5px; font-weight:700; margin:0; color:#111827; display:flex; align-items:center; gap:10px;}
+  .foot{padding:18px 28px; background:var(--g100); font-size:11.5px; color:var(--g500); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+
+  /* ---- shared card/price/button vocabulary (from real clicar.cl patterns) ---- */
+  .tipo{font-size:12.5px; font-weight:600; color:var(--brand); text-transform:uppercase; letter-spacing:.03em;}
+  .name{font-size:22px; font-weight:500; color:var(--brand); line-height:1.25;}
+  .name b{font-weight:700;}
+  .ver{font-size:13.5px; color:var(--stone);}
+  .specs{font-size:12.5px; color:var(--stone);}
+  .was{font-size:13.5px; color:var(--g500); text-decoration:line-through;}
+  .price{font-weight:700; color:var(--brand); font-variant-numeric:tabular-nums;}
+  .price .cur{font-size:14px;} .price .amt{font-size:26px;}
+  .save-pill{background:var(--liq); color:#fff; font-size:11.5px; font-weight:600; padding:4px 11px; border-radius:var(--pill);}
+  .cuota{color:var(--cuota); display:flex; align-items:baseline; gap:4px; font-variant-numeric:tabular-nums;}
+  .cuota .w{font-size:12.5px; font-weight:700;} .cuota .a{font-size:17px; font-weight:700;} .cuota .m{font-size:11.5px; font-weight:600;}
+  .btn{border:0; font-family:"Sora",sans-serif; font-size:12.5px; font-weight:700; border-radius:var(--r-btn); padding:10px 0; flex:1; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;}
+  .btn-wa{background:#25D366; color:#fff;}
+  .btn-solid{background:var(--brand); color:#fff;}
+  .btn-outline{background:#fff; color:var(--brand); border:1.5px solid var(--brand);}
+  .chip{border:1px solid var(--border); background:#fff; border-radius:var(--pill); padding:8px 16px; font-size:13px; font-weight:600; color:#111827;}
+  details{border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-bottom:8px; background:#fff;}
+  summary{font-weight:700; font-size:13.5px; cursor:pointer; color:#111827;}
+  details p{margin:8px 0 2px; font-size:13px; color:var(--stone); line-height:1.55;}
+
+  /* ================= PDP-specific ================= */
+  .pdp-hero{display:flex; gap:26px; padding:26px 28px 10px; flex-wrap:wrap;}
+  .gallery{flex:1 1 340px; min-width:280px;}
+  .gallery-main{aspect-ratio:4/3; border-radius:var(--r-card); background:linear-gradient(135deg,#eef0ea,#fff); display:flex; align-items:center; justify-content:center; position:relative; border:1px solid var(--border);}
+  .gallery-main svg{width:42%; opacity:.5;}
+  .gallery-main .gcount{position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,.6); color:#fff; font-size:11px; font-weight:600; padding:4px 10px; border-radius:var(--pill);}
+  .gallery-main .g360{position:absolute; top:10px; left:10px; background:var(--brand); color:#fff; font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:var(--pill); letter-spacing:.03em;}
+  .thumbs{display:flex; gap:8px; margin-top:8px;}
+  .thumbs i{flex:1; aspect-ratio:1; border-radius:8px; background:var(--g100); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;}
+  .thumbs i svg{width:55%; opacity:.4;}
+  .pdp-info{flex:1 1 320px; min-width:280px; display:flex; flex-direction:column; gap:4px;}
+  .pdp-price{display:flex; flex-direction:column; gap:6px; margin:14px 0 6px;}
+  .pdp-price .row1{display:flex; align-items:center; gap:10px;}
+  .pdp-cta{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .pdp-cta .btn{flex:1 1 130px;}
+
+  .trust-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px;}
+  .trust-chip{display:flex; gap:10px; align-items:flex-start; background:var(--g50); border:1px solid var(--border); border-radius:var(--r-card); padding:14px 16px;}
+  .trust-chip .ic{flex:none; width:34px; height:34px; border-radius:9px; background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center; font-size:15px;}
+  .trust-chip b{display:block; font-size:13px; color:#111827;}
+  .trust-chip span{font-size:12px; color:var(--g500); line-height:1.4;}
+
+  .tier-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px;}
+  .tier-card{border:1.5px solid var(--border); border-radius:var(--r-card); padding:16px; display:flex; flex-direction:column; gap:8px; background:#fff; position:relative;}
+  .tier-card.reco{border-color:var(--brand); box-shadow:0 0 0 3px color-mix(in srgb, var(--brand) 12%, transparent);}
+  .tier-card .reco-badge{position:absolute; top:-11px; left:14px; background:var(--brand); color:#fff; font-size:10px; font-weight:700; letter-spacing:.04em; padding:4px 10px; border-radius:var(--pill);}
+  .tier-card h4{margin:4px 0 0; font-size:14.5px; color:#111827;}
+  .tier-card ul{margin:0; padding-left:16px; font-size:12px; color:var(--g600); line-height:1.6;}
+
+  .rating-row{display:flex; align-items:center; gap:14px; margin-bottom:14px; flex-wrap:wrap;}
+  .rating-big{font-size:30px; font-weight:800; color:#111827;}
+  .stars{color:#f0a83c; font-size:14px; letter-spacing:1px;}
+  .review-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px;}
+  .review-card{border:1px solid var(--border); border-radius:var(--r-card); padding:14px; background:var(--g50); display:flex; flex-direction:column; gap:6px;}
+  .review-card .who{font-size:12.5px; font-weight:700; color:#111827;}
+  .review-card .suc{font-size:11px; color:var(--g500);}
+  .review-card p{margin:2px 0 0; font-size:12.5px; color:var(--g600); line-height:1.5;}
+
+  .accgroup summary{display:flex; justify-content:space-between; align-items:center;}
+  .accgroup summary .n{font-size:11px; font-weight:600; color:var(--g500);}
+  .destacados{display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 6px;}
+  .destacados span{background:var(--g100); border-radius:var(--r); padding:5px 9px; font-size:11.5px; color:var(--g600); font-weight:600;}
+  .accgroup .rest{font-size:12px; color:var(--g500); margin-top:4px;}
+
+  .zone-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px;}
+  .zone-chip{display:flex; align-items:center; gap:8px; border-radius:var(--r); padding:9px 11px; font-size:12px; font-weight:600;}
+  .zone-chip.ok{background:rgba(31,158,98,.10); color:#0b6b3d;}
+  .zone-chip.warn{background:var(--warn-soft); color:var(--warn);}
+  .zone-chip i{width:8px; height:8px; border-radius:50%; background:currentColor; flex:none;}
+  .insp-notes{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:14px;}
+  .insp-note{border:1px solid var(--border); border-radius:var(--r-card); padding:12px 14px; background:#fff; display:flex; gap:10px;}
+  .insp-note .ph{flex:none; width:46px; height:46px; border-radius:8px; background:var(--g100); display:flex; align-items:center; justify-content:center; font-size:16px;}
+  .insp-note b{display:block; font-size:12.5px; color:#111827;}
+  .insp-note span{font-size:11.5px; color:var(--g500); line-height:1.4;}
+
+  .sim-box{border:1px solid var(--border); border-radius:var(--r-card); padding:18px; background:var(--g50); display:flex; gap:24px; flex-wrap:wrap; align-items:center;}
+  .sim-chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .sim-chips button{border:1.5px solid var(--border); background:#fff; border-radius:var(--pill); padding:7px 14px; font-size:12.5px; font-weight:700; color:var(--g600); cursor:pointer;}
+  .sim-chips button.sel{background:var(--brand); border-color:var(--brand); color:#fff;}
+  .sim-result{display:flex; flex-direction:column; gap:2px;}
+  .sim-result .amt{font-size:28px; font-weight:800; color:var(--brand);}
+  .sim-result .lbl{font-size:11px; color:var(--g500);}
+
+  .similar-strip{display:flex; gap:14px; overflow-x:auto; padding-bottom:6px;}
+  .mini-card{flex:none; width:170px; border:1px solid var(--border); border-radius:var(--r-card); overflow:hidden; background:#fff;}
+  .mini-card .mimg{height:90px; background:linear-gradient(135deg,#eef0ea,#fff); display:flex; align-items:center; justify-content:center;}
+  .mini-card .mimg svg{width:46%; opacity:.45;}
+  .mini-card .mbody{padding:9px 10px;}
+  .mini-card .mbody .name{font-size:13px;}
+  .mini-card .mbody .price{font-size:13px;}
+  .mini-card .mbody .price .amt{font-size:15px;}
+
+  /* ================= COTIZACIÓN ================= */
+  .flow-cols{display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;}
+  .flow-step{flex:1 1 260px; min-width:240px;}
+  .flow-step .step-lbl{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--g500); margin-bottom:8px;}
+  .mini-form{border:1px solid var(--border); border-radius:var(--r-card); padding:16px; background:#fff; display:flex; flex-direction:column; gap:10px;}
+  .mini-field{display:flex; flex-direction:column; gap:4px;}
+  .mini-field label{font-size:11px; font-weight:600; color:var(--g600);}
+  .mini-field .box{border:1.5px solid var(--border); border-radius:9px; padding:10px 12px; font-size:13px; color:var(--g500); background:var(--g50);}
+  .flow-arrow{display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--g500); flex:0 0 26px; align-self:center; margin-top:40px;}
+  @media (max-width:760px){.flow-arrow{display:none;}}
+
+  .hub-confirm{border:1px solid var(--border); border-radius:var(--r-card); padding:18px 20px; background:var(--g50); display:flex; gap:14px; align-items:flex-start;}
+  .hub-confirm .check{flex:none; width:38px; height:38px; border-radius:50%; background:var(--liq); color:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800;}
+  .hub-confirm h4{margin:0 0 4px; font-size:15px; color:#111827;}
+  .hub-confirm p{margin:0; font-size:12.5px; color:var(--g600); line-height:1.5;}
+  .ref-chip{display:inline-block; margin-top:8px; background:#fff; border:1px solid var(--border); border-radius:var(--pill); padding:4px 12px; font-size:11.5px; font-weight:700; color:var(--brand); font-variant-numeric:tabular-nums;}
+
+  .hub-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-top:16px;}
+  .hub-card{border:1.5px solid var(--border); border-radius:var(--r-card); padding:18px; background:#fff; display:flex; flex-direction:column; gap:8px; position:relative;}
+  .hub-card .ic{width:38px; height:38px; border-radius:10px; background:var(--g100); display:flex; align-items:center; justify-content:center; font-size:17px;}
+  .hub-card h4{margin:2px 0 0; font-size:14.5px; color:#111827;}
+  .hub-card p{margin:0; font-size:12px; color:var(--g500); line-height:1.5; flex:1;}
+  .hub-card .term{position:absolute; top:12px; right:12px; font-size:9.5px; font-weight:700; color:var(--brand); background:var(--g100); padding:3px 8px; border-radius:var(--pill);}
+  .hub-exit{margin-top:16px; text-align:center; font-size:13px; font-weight:600; color:var(--g500);}
+
+  .sheet-mock{max-width:340px; margin:16px auto 0; border:1px solid var(--border); border-radius:20px 20px 8px 8px; background:#fff; box-shadow:0 -6px 20px rgba(0,0,0,.08); overflow:hidden;}
+  .sheet-mock .handle{display:flex; justify-content:center; padding:9px 0 4px;}
+  .sheet-mock .handle i{width:34px; height:4px; border-radius:2px; background:var(--border);}
+  .sheet-mock h5{margin:2px 20px 10px; font-size:13px; color:#111827;}
+  .sheet-row{display:flex; align-items:center; gap:10px; padding:11px 20px; border-top:1px solid var(--border); font-size:12.5px; font-weight:600; color:#111827;}
+  .sheet-row .ic{width:26px;height:26px;border-radius:7px;background:var(--g100); display:flex; align-items:center; justify-content:center; font-size:13px; flex:none;}
+  .sheet-row span.arrow{margin-left:auto; color:var(--g500);}
+
+  /* ================= TASACIÓN ================= */
+  .elig-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+  .elig-chip{display:flex; align-items:center; gap:8px; background:rgba(31,158,98,.10); color:#0b6b3d; border-radius:var(--pill); padding:8px 14px; font-size:12.5px; font-weight:700;}
+
+  .tas-form{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px;}
+  .tas-field label{display:block; font-size:11px; font-weight:600; color:var(--g600); margin-bottom:5px;}
+  .tas-field .box{border:1.5px solid var(--border); border-radius:9px; padding:11px 13px; font-size:13px; color:#111827; background:#fff; display:flex; justify-content:space-between; align-items:center;}
+  .tas-field .box span.ph{color:var(--g500); font-weight:500;}
+  .tas-field .hint{font-size:11px; color:var(--g500); margin-top:4px;}
+
+  .cal-mock{display:flex; gap:22px; flex-wrap:wrap; align-items:flex-start;}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px; width:min(320px,100%);}
+  .cal-grid .dow{font-size:10px; text-align:center; color:var(--g500); font-weight:700;}
+  .cal-day{aspect-ratio:1; border-radius:8px; background:var(--g100); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--g600); font-weight:600;}
+  .cal-day.sel{background:var(--brand); color:#fff;}
+  .cal-day.off{opacity:.35;}
+  .hour-chips{display:flex; flex-direction:column; gap:8px;}
+  .hour-chips .row{display:flex; gap:8px; flex-wrap:wrap;}
+  .hour-chips button{border:1.5px solid var(--border); background:#fff; border-radius:9px; padding:8px 13px; font-size:12.5px; font-weight:700; color:var(--g600);}
+  .hour-chips button.sel{background:var(--brand); border-color:var(--brand); color:#fff;}
+
+  .result-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;}
+  .result-card{border:1.5px solid var(--border); border-radius:var(--r-card); padding:20px; background:#fff;}
+  .result-card .tag{font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--g500);}
+  .result-card .amt{font-size:24px; font-weight:800; color:var(--brand); margin:8px 0 4px; font-variant-numeric:tabular-nums;}
+  .result-card p{margin:0 0 12px; font-size:12.5px; color:var(--g600); line-height:1.5;}
+
+  @media (max-width:640px){
+    .hdr{padding:10px 16px;} .nav{display:none;}
+    .crumb{padding:10px 16px;}
+    .sec{padding:18px;}
+    .pdp-hero{padding:18px 16px 6px;}
+  }
+</style>
+</head>
+<body>
+
+
+<div class="page-head">
+  <div class="eyebrow">Propuesta &middot; Prototipo de validación interna</div>
+  <h1>Puntos de contacto clave: usados</h1>
+  <p>Wireframes de alta fidelidad de los momentos clave del journey de usados que hoy dependen del sitio de Clicar, para revisar cómo se ven una vez rebrandeados a Salazar Israel Usados y Portillo Usados: el Home dedicado ya compartido, más Ficha de vehículo, Cotización y Tasación en el mismo sistema visual.</p>
+  <p class="src">Contenido basado en investigación propia: Clarity de Catálogo y de Ficha PDP, benchmark y spec MVP1 del Flujo de Cotización (Hub de decisión, Constanza Araya), benchmark del Flujo de Tasación, y la propuesta "Transparencia PDP" en revisión. Los datos de vehículos y cifras son ilustrativos para la validación, no datos reales de stock. Paleta y tipografía recoloreadas según brandbook oficial de cada empresa: Salazar Israel Usados (#004c94 + trío 7548C/233U/Process Blue C2, Mont + Gamay Wide Black &mdash; sustitutas: Poppins + Unbounded) y Portillo Usados (#0082d1 + #6bc1ea + #ffeb42, FF Good Pro &mdash; sustituta: Work Sans).</p>
+  <div class="controls">
+    <div class="controls-row">
+      <div class="tabs" role="tablist" aria-label="Punto de contacto">
+        <button class="tab-btn" id="tab-home" role="tab" aria-selected="true" onclick="setTP('home')">Home</button>
+        <button class="tab-btn" id="tab-pdp" role="tab" aria-selected="false" onclick="setTP('pdp')">Ficha de vehículo (PDP)</button>
+        <button class="tab-btn" id="tab-cot" role="tab" aria-selected="false" onclick="setTP('cot')">Cotización</button>
+        <button class="tab-btn" id="tab-tas" role="tab" aria-selected="false" onclick="setTP('tas')">Tasación</button>
+      </div>
+      <label class="annot-toggle">
+        <input type="checkbox" id="annotToggle" onchange="toggleAnnot(this.checked)">
+        Mostrar notas de diseño
+      </label>
+    </div>
+    <div class="controls-row">
+      <div class="tabs sub" role="tablist" aria-label="Marca">
+        <button class="tab-btn" id="tab-sais" role="tab" aria-selected="true" onclick="setBrand('sais')">Salazar Israel Usados</button>
+        <button class="tab-btn" id="tab-portillo" role="tab" aria-selected="false" onclick="setBrand('portillo')">Portillo Usados</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ legends per touchpoint ============ -->
+<div class="legend" id="legend-home" hidden>
+  <div class="legend-grid">
+    <div><span class="legend-num">1</span> Barra de urgencia + header &mdash; ancla de marca post&#8209;Clicar</div>
+    <div><span class="legend-num">2</span> Hero + accesos rápidos</div>
+    <div><span class="legend-num">3</span> Panel de campaña &mdash; bono y progreso, patrón real de Clicar</div>
+    <div><span class="legend-num">4</span> Auto destacado &mdash; "el que más bajó hoy"</div>
+    <div><span class="legend-num">5</span> Marcas más buscadas &mdash; a confirmar por sitio con GA4</div>
+    <div><span class="legend-num">6</span> Grilla &mdash; tarjeta con escalera de precio y bono</div>
+    <div><span class="legend-num">7</span> Contenido SEO &mdash; hubs de marca (Sprint 2 Metrix)</div>
+    <div><span class="legend-num">8</span> FAQ &mdash; continuidad de confianza durante el piloto</div>
+  </div>
+</div>
+<div class="legend" id="legend-pdp" hidden>
+  <div class="legend-grid">
+    <div><span class="legend-num">1</span> Galería + precio &mdash; CTAs con paridad al catálogo</div>
+    <div><span class="legend-num">2</span> Bloque de confianza &mdash; hoy vive solo aquí, no en el catálogo</div>
+    <div><span class="legend-num">3</span> Garantía GarantiPLUS &mdash; 4 niveles, Excellence Light recomendada</div>
+    <div><span class="legend-num">4</span> Reviews &mdash; integración Partoo, solo 4&ndash;5★</div>
+    <div><span class="legend-num">5</span> Ficha técnica &mdash; 49 campos / 6 grupos, 6 destacados por grupo</div>
+    <div><span class="legend-num">6</span> Transparencia e inspección &mdash; propuesta en revisión, piloto Salazar Israel</div>
+    <div><span class="legend-num">7</span> Simulador financiero</div>
+    <div><span class="legend-num">8</span> Similares y FAQ</div>
+  </div>
+</div>
+<div class="legend" id="legend-cot" hidden>
+  <div class="legend-grid">
+    <div><span class="legend-num">1</span> Formulario de contacto &mdash; único paso obligatorio</div>
+    <div><span class="legend-num">2</span> Confirmación con número de referencia</div>
+    <div><span class="legend-num">3</span> Hub de decisión &mdash; 3 herramientas independientes, cualquier orden</div>
+    <div><span class="legend-num">4</span> Bottom sheet dinámico &mdash; solo muestra herramientas no usadas</div>
+  </div>
+</div>
+<div class="legend" id="legend-tas" hidden>
+  <div class="legend-grid">
+    <div><span class="legend-num">1</span> Portada &mdash; elegibilidad comunicada antes de empezar</div>
+    <div><span class="legend-num">2</span> Formulario &mdash; tipeable, patente/VIN, sin bloqueos al editar</div>
+    <div><span class="legend-num">3</span> Agendamiento &mdash; calendario visual + horas</div>
+    <div><span class="legend-num">4</span> Resultado &mdash; dos estados posibles según el vehículo</div>
+  </div>
+</div>
+
+<!-- reusable car glyph -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
+  <symbol id="car-glyph" viewBox="0 0 64 34">
+    <path d="M4 25h56M8 25c0-8 3-12 10-13l12-7h14l11 8 6 2c4 1 5 4 5 10" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="21" cy="26" r="5" fill="none" stroke="#111827" stroke-width="2"/>
+    <circle cx="49" cy="26" r="5" fill="none" stroke="#111827" stroke-width="2"/>
+  </symbol>
+</svg>
+
+<!-- ======================================================================= -->
+<!-- HOME — SALAZAR ISRAEL                                                    -->
+<!-- ======================================================================= -->
+<div class="panel" id="panel-home-sais">
+  <div class="frame site" style="--brand:#004c94; --brand-2:#0083b1; --liq:#c83884; --cuota:#0083b1; --promo:#c83884; --on-surf:#cfe3f5; --on-surf-lbl:#9ec3e0; --font-body:'Poppins'; --font-display:'Unbounded';">
+    <div class="frame-bar"><span></span><span></span><span></span><div class="frame-url">salazarisrael.cl/usados</div></div>
+
+    <div class="ubar"><span class="annot" hidden style="margin-right:-6px;">1</span>
+      <span class="utag">CIERRE DE MES</span>
+      <span class="u-copy">186 autos con rebaja aplicada &middot; <b style="color:#c83884;">92 ya se fueron</b></span>
+      <span style="width:1px;height:20px;background:rgba(255,255,255,.28);"></span>
+      <span class="u-copy">Todos con bono de <b style="color:#c83884;">$250.000</b> incluido</span>
+      <span class="u-cta">VER OFERTAS</span>
+    </div>
+
+    <div class="hdr">
+      <div class="logo">
+        <div class="logo-mark mk-sais" style="--liq:#fcbe01;"></div>
+        <div class="logo-txt" style="--rule:linear-gradient(180deg,#0083b1 0 33%,#c83884 33% 66%,#fcbe01 66% 100%);"><b>Salazar Israel</b><i>USADOS</i></div>
+      </div>
+      <div class="nav">
+        <span class="cur">USADOS<span class="cnt" style="background:#c83884;">186</span></span>
+        <span>Nuevos</span><span>Ofertas</span><span>Atención al cliente</span><span>Sucursales</span>
+      </div>
+      <div class="hdr-icons">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 00-7.1 0L12 7.3l-1.7-1.7a5 5 0 10-7.1 7.1L12 21.4l8.8-8.7a5 5 0 000-7.1z"/></svg>
+      </div>
+    </div>
+
+    <div class="hero-banner"><span class="annot" hidden style="position:absolute;top:10px;left:10px;">2</span>
+      <div class="search-pill">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#004c94" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span>Busca por marca o modelo&hellip;</span>
+      </div>
+    </div>
+    <div class="tiles">
+      <div class="tile-q">🚗 Comprar usados</div>
+      <div class="tile-q">💰 Vender tu auto</div>
+      <div class="tile-q hot"><span class="flag">HASTA −18%</span>🏷️ Ofertas del mes</div>
+      <div class="tile-q">📍 Sucursales</div>
+    </div>
+
+    <div class="campaign">
+      <span class="annot" hidden style="position:absolute;margin-top:-10px;">3</span>
+      <div class="camp-top">
+        <div>
+          <div class="camp-eyebrow"><span class="dot"></span><span>CIERRE DE MES &middot; STOCK QUE SE RENUEVA</span></div>
+          <h2 class="hl">186 autos con <em>rebaja aplicada</em><br>este mes en Salazar Israel</h2>
+          <p>Descuentos de hasta <b style="color:#fff;">−18%</b> sobre el precio de lista, revisados y con inspección de 200 puntos. Cada uno suma un <b style="color:#c83884;">bono de $250.000</b>.</p>
+        </div>
+        <div class="bono-panel">
+          <span class="lbl">BONO INCLUIDO EN LOS 186</span>
+          <div class="amt"><small>$</small><b>250.000</b></div>
+          <span class="note">Se descuenta directo del precio. Sin trámites ni condiciones.</span>
+        </div>
+      </div>
+      <div class="progress-panel">
+        <div class="progress-main">
+          <div class="row"><span>Ya salieron <b>92 de 278</b> autos de esta rebaja</span><span>Quedan 186</span></div>
+          <div class="bar"><span style="width:33%;"></span></div>
+        </div>
+        <span style="width:1px;height:40px;background:rgba(255,255,255,.24);"></span>
+        <div class="progress-side"><b>23 autos</b><i>salieron en los últimos 7 días</i></div>
+      </div>
+    </div>
+
+    <div class="lot">
+      <div class="featured"><span class="annot" hidden style="position:absolute;margin:-10px 0 0 -10px;">4</span>
+        <div class="fmedia"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div>
+        <div class="fbody">
+          <span class="tipo">Sedán</span>
+          <span class="name"><b>Kia</b> Rio</span>
+          <span class="ver">1.4 EX AT 4P</span>
+          <span class="specs">2021 &middot; 61.400 Km &middot; Automático &middot; Bencina</span>
+          <div class="tagrow">
+            <span class="pill-tag days">261 días en patio</span>
+            <span class="pill-tag bono">Bono $250.000 incluido</span>
+            <span class="pill-tag views">👁 19 personas lo vieron hoy</span>
+          </div>
+        </div>
+        <div class="fprice">
+          <span class="was">$9.290.000</span>
+          <span class="price"><span class="cur">$</span><span class="amt">8.190.000</span></span>
+          <span class="save-pill">BAJÓ $1.100.000 &middot; −12%</span>
+          <span class="cuota"><span class="w">Cuota</span> $<span class="a">204.000*</span><span class="m">/36 meses</span></span>
+          <button class="btn-buy">LO QUIERO</button>
+        </div>
+      </div>
+
+      <span class="annot" hidden style="margin:20px 0 -14px; display:inline-flex;">6</span>
+      <div class="grid">
+        <article class="card">
+          <div class="cimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg><span class="badge">−11% REBAJA</span><span class="age">198 días</span><span class="drop">↓ Bajó $700.000 · −11%</span></div>
+          <div class="cbody">
+            <div class="tipo">Hatchback</div>
+            <div class="name"><b>Chevrolet</b> Sail</div>
+            <div class="ver">1.4 LT MT 5P</div>
+            <div class="specs">2022 &middot; 32.000 Km &middot; Automático</div>
+            <div class="loc">📍 Ñuñoa, Santiago</div>
+            <div class="prow">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span class="was">$9.190.000</span><span class="save-pill">−$700.000</span></div>
+                <div class="price"><span class="cur">$</span><span class="amt">8.490.000</span></div>
+              </div>
+              <div class="bono-tag"><i>Incluye bono</i><b>$250.000</b></div>
+            </div>
+            <div class="cuota"><span class="w">Cuota</span> $<span class="a">149.900*</span><span class="m">/36 meses</span></div>
+            <div class="lbox"><div class="ladder"><i style="height:16px;background:#cfe3f5;"></i><i style="height:11px;background:#cfe3f5;"></i><i style="height:8px;background:#c83884;"></i><i style="height:5px;"></i></div><span>3 bajas aplicadas &middot; −11% sobre lista</span></div>
+            <div class="cta"><button class="btn btn-wa">WhatsApp</button><button class="btn btn-solid">Cotizar</button></div>
+            <div class="vermas">Ver más detalles &rsaquo;</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="cimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg><span class="badge deep">−9% REBAJA</span><span class="age hot">241 días</span><span class="drop">↓ Bajó $900.000 · queda 1 unidad</span></div>
+          <div class="cbody">
+            <div class="tipo">Automóvil</div>
+            <div class="name"><b>Peugeot</b> 208</div>
+            <div class="ver">1.2 ACTIVE PACK 4X2 HB</div>
+            <div class="specs">2020 &middot; 44.700 Km &middot; Mecánico</div>
+            <div class="loc">📍 Providencia, Santiago</div>
+            <div class="prow">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span class="was">$10.290.000</span><span class="save-pill">−$900.000</span></div>
+                <div class="price"><span class="cur">$</span><span class="amt">9.390.000</span></div>
+              </div>
+              <div class="bono-tag"><i>Incluye bono</i><b>$250.000</b></div>
+            </div>
+            <div class="cuota"><span class="w">Cuota</span> $<span class="a">165.900*</span><span class="m">/36 meses</span></div>
+            <div class="lbox"><div class="ladder"><i style="height:16px;background:#cfe3f5;"></i><i style="height:11px;background:#cfe3f5;"></i><i style="height:8px;background:#cfe3f5;"></i><i style="height:5px;background:#004c94;"></i></div><span>4 bajas aplicadas &middot; −9% sobre lista</span></div>
+            <div class="cta"><button class="btn btn-wa">WhatsApp</button><button class="btn btn-solid">Cotizar</button></div>
+            <div class="vermas">Ver más detalles &rsaquo;</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="cimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg><span class="badge">−7% REBAJA</span><span class="age">156 días</span><span class="drop">👁 2 personas lo cotizaron hoy</span></div>
+          <div class="cbody">
+            <div class="tipo">SUV</div>
+            <div class="name"><b>Hyundai</b> Tucson</div>
+            <div class="ver">2.0 GLS 4X2 AT</div>
+            <div class="specs">2022 &middot; 41.000 Km &middot; Automático &middot; Diésel</div>
+            <div class="loc">📍 Viña del Mar</div>
+            <div class="prow">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span class="was">$18.790.000</span><span class="save-pill">−$1.300.000</span></div>
+                <div class="price"><span class="cur">$</span><span class="amt">17.490.000</span></div>
+              </div>
+              <div class="bono-tag"><i>Incluye bono</i><b>$250.000</b></div>
+            </div>
+            <div class="cuota"><span class="w">Cuota</span> $<span class="a">309.900*</span><span class="m">/36 meses</span></div>
+            <div class="lbox"><div class="ladder"><i style="height:16px;background:#cfe3f5;"></i><i style="height:11px;background:#c83884;"></i><i style="height:8px;background:#cfe3f5;"></i><i style="height:5px;background:#cfe3f5;"></i></div><span>2 bajas aplicadas &middot; −7% sobre lista</span></div>
+            <div class="cta"><button class="btn btn-wa">WhatsApp</button><button class="btn btn-solid">Cotizar</button></div>
+            <div class="vermas">Ver más detalles &rsaquo;</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="cimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg>
+            <div class="sold"><b>SE FUE</b><i>Vendido hace 5 horas</i></div>
+          </div>
+          <div class="cbody">
+            <div class="tipo">Hatchback</div>
+            <div class="name"><b>Suzuki</b> Swift</div>
+            <div class="ver">1.2 GLX MT 5P</div>
+            <div class="specs">2021 &middot; 38.200 Km &middot; Mecánico</div>
+            <div class="loc">📍 Ñuñoa, Santiago</div>
+            <div style="background:var(--g100);border-radius:var(--r);padding:10px;font-size:12.5px;margin-top:4px;">Llevaba 203 días en patio. Se vendió 2 días después de bajar $600.000.</div>
+            <button class="btn btn-solid" style="margin-top:8px;">Avísame si aparece otro igual</button>
+          </div>
+        </article>
+      </div>
+
+      <div class="close-cta">
+        <span class="main">VER LOS 186 AUTOS EN OFERTA →</span>
+        <span class="sub">Hablar con un ejecutivo</span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>5</span><h3>Marcas más buscadas en Salazar Israel</h3></div>
+      <p class="sec-note" hidden>Chips a confirmar con GA4 propio del sitio &mdash; no reutilizar el set genérico Toyota/Kia/Hyundai ya diseñado para otra marca del grupo.</p>
+      <div class="chipset">
+        <div class="chip">Todas las marcas</div><div class="chip">Chevrolet</div><div class="chip">Kia</div><div class="chip">Peugeot</div><div class="chip">Hyundai</div><div class="chip">Suzuki</div><div class="chip">Toyota</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>7</span><h3>Explora y aprende</h3></div>
+      <p class="sec-note" hidden>Enlaces a hubs de marca (indexables) + contenido editorial de la pauta de blog SEO ya definida &mdash; desbloquea el 91% de clics perdidos hoy en "autos usados".</p>
+      <div class="seo-cols">
+        <div class="hublist">
+          <a href="#">Usados Toyota en Salazar Israel <span>312 autos</span></a>
+          <a href="#">Usados Chevrolet en Salazar Israel <span>287 autos</span></a>
+          <a href="#">Usados Kia en Salazar Israel <span>241 autos</span></a>
+          <a href="#">Usados Hyundai en Salazar Israel <span>198 autos</span></a>
+        </div>
+        <div class="blogcard"><div class="tag">Guía de compra</div><h4>¿Cómo evaluar un auto usado antes de comprarlo?</h4><p>Los 200 puntos que revisamos, explicados uno por uno.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>8</span><h3>Preguntas frecuentes</h3></div>
+      <details open><summary>¿Qué pasó con Clicar?</summary><p>Clicar ahora se dedica a la compra y venta B2B de vehículos. La venta de usados a público continúa en Salazar Israel, con el mismo equipo, inspección y garantía.</p></details>
+      <details><summary>¿Qué garantía tienen los usados?</summary><p>Todos los vehículos incluyen garantía e inspección de 200 puntos.</p></details>
+      <details><summary>¿Puedo tasar mi auto actual?</summary><p>Sí, puedes tasarlo online o en sucursal y usarlo como parte de pago.</p></details>
+    </div>
+
+    <div class="foot"><span>© Salazar Israel &middot; parte de Grupo Americar</span><span>45+ sucursales en Chile</span></div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- HOME — PORTILLO                                                          -->
+<!-- ======================================================================= -->
+<div class="panel" id="panel-home-portillo" hidden>
+  <div class="frame site" style="--brand:#0082d1; --brand-2:#6bc1ea; --liq:#005b96; --cuota:#0082d1; --promo:#005b96; --on-surf:#e8f4fc; --on-surf-lbl:#a9d6ef; --font-body:'Work Sans'; --font-display:'Work Sans';">
+    <div class="frame-bar"><span></span><span></span><span></span><div class="frame-url">portillo.cl/usados</div></div>
+
+    <div class="ubar"><span class="annot" hidden style="margin-right:-6px;">1</span>
+      <span class="utag">STOCK EN MOVIMIENTO</span>
+      <span class="u-copy">240 autos con rebaja esta semana &middot; <b style="color:#005b96;">58 ya se fueron</b></span>
+      <span style="width:1px;height:20px;background:rgba(255,255,255,.28);"></span>
+      <span class="u-copy">Todos con bono de <b style="color:#005b96;">$200.000</b> incluido</span>
+      <span class="u-cta">VER OFERTAS</span>
+    </div>
+
+    <div class="hdr">
+      <div class="logo">
+        <div class="logo-mark mk-portillo" style="--liq:#ffeb42;"></div>
+        <div class="logo-txt" style="--rule:linear-gradient(180deg,#6bc1ea 0 50%,#ffeb42 50% 100%);"><b>///Portillo</b><i>USADOS</i></div>
+      </div>
+      <div class="nav">
+        <span class="cur">USADOS<span class="cnt" style="background:#005b96;">240</span></span>
+        <span>Nuevos</span><span>Flotas</span><span>Ofertas</span><span>Sucursales</span>
+      </div>
+      <div class="hdr-icons">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.8 5.6a5 5 0 00-7.1 0L12 7.3l-1.7-1.7a5 5 0 10-7.1 7.1L12 21.4l8.8-8.7a5 5 0 000-7.1z"/></svg>
+      </div>
+    </div>
+
+    <div class="hero-banner"><span class="annot" hidden style="position:absolute;top:10px;left:10px;">2</span>
+      <div class="search-pill">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0082d1" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span>Busca por marca o modelo&hellip;</span>
+      </div>
+    </div>
+    <div class="tiles">
+      <div class="tile-q">🚗 Comprar usados</div>
+      <div class="tile-q">💰 Vender tu auto</div>
+      <div class="tile-q hot"><span class="flag">HASTA −15%</span>🏷️ Ofertas de la semana</div>
+      <div class="tile-q">🏢 Flotas</div>
+    </div>
+
+    <div class="campaign">
+      <span class="annot" hidden style="position:absolute;margin-top:-10px;">3</span>
+      <div class="camp-top">
+        <div>
+          <div class="camp-eyebrow"><span class="dot"></span><span>STOCK EN MOVIMIENTO &middot; MÁS DE 3.000 AUTOS</span></div>
+          <h2 class="hl">240 autos con <em>rebaja</em><br>esta semana en Portillo</h2>
+          <p>El stock de usados más grande del grupo, con descuentos de hasta <b style="color:#fff;">−15%</b> sobre el precio de lista. Cada uno suma un <b style="color:#005b96;">bono de $200.000</b>.</p>
+        </div>
+        <div class="bono-panel">
+          <span class="lbl">BONO INCLUIDO EN LOS 240</span>
+          <div class="amt"><small>$</small><b>200.000</b></div>
+          <span class="note">Se descuenta directo del precio. Sin trámites ni condiciones.</span>
+        </div>
+      </div>
+      <div class="progress-panel">
+        <div class="progress-main">
+          <div class="row"><span>Ya salieron <b>58 de 298</b> autos de esta rebaja</span><span>Quedan 240</span></div>
+          <div class="bar"><span style="width:19%;"></span></div>
+        </div>
+        <span style="width:1px;height:40px;background:rgba(255,255,255,.24);"></span>
+        <div class="progress-side"><b>31 autos</b><i>salieron en los últimos 7 días</i></div>
+      </div>
+    </div>
+
+    <div class="lot">
+      <div class="featured"><span class="annot" hidden style="position:absolute;margin:-10px 0 0 -10px;">4</span>
+        <div class="fmedia"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div>
+        <div class="fbody">
+          <span class="tipo">Hatchback</span>
+          <span class="name"><b>Nissan</b> Versa</span>
+          <span class="ver">1.6 SENSE AT 4P</span>
+          <span class="specs">2022 &middot; 22.100 Km &middot; Automático &middot; Bencina</span>
+          <div class="tagrow">
+            <span class="pill-tag days">214 días en patio</span>
+            <span class="pill-tag bono">Bono $200.000 incluido</span>
+            <span class="pill-tag views">👁 27 personas lo vieron hoy</span>
+          </div>
+        </div>
+        <div class="fprice">
+          <span class="was">$10.890.000</span>
+          <span class="price"><span class="cur">$</span><span class="amt">9.790.000</span></span>
+          <span class="save-pill">BAJÓ $1.100.000 &middot; −10%</span>
+          <span class="cuota"><span class="w">Cuota</span> $<span class="a">173.900*</span><span class="m">/36 meses</span></span>
+          <button class="btn-buy">LO QUIERO</button>
+        </div>
+      </div>
+
+      <span class="annot" hidden style="margin:20px 0 -14px; display:inline-flex;">6</span>
+      <div class="grid">
+        <article class="card">
+          <div class="cimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg><span class="badge">−13% REBAJA</span><span class="age">231 días</span><span class="drop">↓ Bajó $2.400.000 · −13%</span></div>
+          <div class="cbody">
+            <div class="tipo">Pickup</div>
+            <div class="name"><b>Toyota</b> Hilux</div>
+            <div class="ver">2.4 SRV 4X4 MT</div>
+            <div class="specs">2021 &middot; 54.000 Km &middot; Manual &middot; Diésel</div>
+            <div class="loc">📍 Concepción</div>
+            <div class="prow">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span class="was">$22.390.000</span><span class="save-pill">−$2.400.000</span></div>
+                <div class="price"><span class="cur">$</span><span class="amt">19.990.000</span></div>
+              </div>
+              <div class="bono-tag"><i>Incluye bono</i><b>$200.000</b></div>
+            </div>
+            <div class="cuota"><span class="w">Cuota</span> $<span class="a">354.900*</span><span class="m">/36 meses</span></div>
+            <div class="lbox"><div class="ladder"><i style="height:16px;background:#e8f4fc;"></i><i style="height:11px;background:#e8f4fc;"></i><i style="height:8px;background:#e8f4fc;"></i><i style="height:5px;background:#005b96;"></i></div><span>4 bajas aplicadas &middot; −13% sobre lista</span></div>
+            <div class="cta"><button class="btn btn-wa">WhatsApp</button><button class="btn btn-solid">Cotizar</button></div>
+            <div class="vermas">Ver más detalles &rsaquo;</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="cimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg><span class="badge deep">−9% REBAJA</span><span class="age hot">189 días</span><span class="drop">↓ Bajó $780.000 · queda 1 unidad</span></div>
+          <div class="cbody">
+            <div class="tipo">Hatchback</div>
+            <div class="name"><b>Citroën</b> C3</div>
+            <div class="ver">1.6 FEEL MT 5P</div>
+            <div class="specs">2021 &middot; 33.400 Km &middot; Manual</div>
+            <div class="loc">📍 Concepción</div>
+            <div class="prow">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span class="was">$9.070.000</span><span class="save-pill">−$780.000</span></div>
+                <div class="price"><span class="cur">$</span><span class="amt">8.290.000</span></div>
+              </div>
+              <div class="bono-tag"><i>Incluye bono</i><b>$200.000</b></div>
+            </div>
+            <div class="cuota"><span class="w">Cuota</span> $<span class="a">146.900*</span><span class="m">/36 meses</span></div>
+            <div class="lbox"><div class="ladder"><i style="height:16px;background:#e8f4fc;"></i><i style="height:11px;background:#e8f4fc;"></i><i style="height:8px;background:#0082d1;"></i><i style="height:5px;background:#e8f4fc;"></i></div><span>3 bajas aplicadas &middot; −9% sobre lista</span></div>
+            <div class="cta"><button class="btn btn-wa">WhatsApp</button><button class="btn btn-solid">Cotizar</button></div>
+            <div class="vermas">Ver más detalles &rsaquo;</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="cimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg><span class="badge">−6% REBAJA</span><span class="age">102 días</span><span class="drop">👁 3 personas lo cotizaron hoy</span></div>
+          <div class="cbody">
+            <div class="tipo">SUV</div>
+            <div class="name"><b>MG</b> ZS</div>
+            <div class="ver">1.5 COMFORT CVT</div>
+            <div class="specs">2022 &middot; 19.500 Km &middot; Automático</div>
+            <div class="loc">📍 Temuco</div>
+            <div class="prow">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <div style="display:flex;align-items:center;gap:6px;"><span class="was">$11.990.000</span><span class="save-pill">−$700.000</span></div>
+                <div class="price"><span class="cur">$</span><span class="amt">11.290.000</span></div>
+              </div>
+              <div class="bono-tag"><i>Incluye bono</i><b>$200.000</b></div>
+            </div>
+            <div class="cuota"><span class="w">Cuota</span> $<span class="a">199.900*</span><span class="m">/36 meses</span></div>
+            <div class="lbox"><div class="ladder"><i style="height:16px;background:#e8f4fc;"></i><i style="height:11px;background:#005b96;"></i><i style="height:8px;background:#e8f4fc;"></i><i style="height:5px;background:#e8f4fc;"></i></div><span>2 bajas aplicadas &middot; −6% sobre lista</span></div>
+            <div class="cta"><button class="btn btn-wa">WhatsApp</button><button class="btn btn-solid">Cotizar</button></div>
+            <div class="vermas">Ver más detalles &rsaquo;</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="cimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg>
+            <div class="sold"><b>SE FUE</b><i>Vendido hace 2 horas</i></div>
+          </div>
+          <div class="cbody">
+            <div class="tipo">Automóvil</div>
+            <div class="name"><b>Peugeot</b> 2008</div>
+            <div class="ver">1.6 ALLURE AT</div>
+            <div class="specs">2023 &middot; 11.800 Km &middot; Automático</div>
+            <div class="loc">📍 Santiago Centro</div>
+            <div style="background:var(--g100);border-radius:var(--r);padding:10px;font-size:12.5px;margin-top:4px;">Llevaba 118 días en patio. Se vendió 1 día después de bajar $400.000.</div>
+            <button class="btn btn-solid" style="margin-top:8px;">Avísame si aparece otro igual</button>
+          </div>
+        </article>
+      </div>
+
+      <div class="close-cta">
+        <span class="main">VER LOS 240 AUTOS EN OFERTA →</span>
+        <span class="sub">Hablar con un ejecutivo</span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>5</span><h3>Marcas más buscadas en Portillo</h3></div>
+      <p class="sec-note" hidden>Chips a confirmar con GA4 propio del sitio &mdash; el catálogo de marcas de Portillo es más amplio que el de Salazar Israel (incluye Citroën, MG, JAC).</p>
+      <div class="chipset">
+        <div class="chip">Todas las marcas</div><div class="chip">Toyota</div><div class="chip">Nissan</div><div class="chip">Peugeot</div><div class="chip">Citroën</div><div class="chip">Hyundai</div><div class="chip">MG</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>7</span><h3>Explora y aprende</h3></div>
+      <p class="sec-note" hidden>Enlaces a hubs de marca (indexables) + contenido editorial de la pauta de blog SEO ya definida &mdash; desbloquea el 91% de clics perdidos hoy en "autos usados".</p>
+      <div class="seo-cols">
+        <div class="hublist">
+          <a href="#">Usados Toyota en Portillo <span>402 autos</span></a>
+          <a href="#">Usados Nissan en Portillo <span>268 autos</span></a>
+          <a href="#">Usados Peugeot en Portillo <span>231 autos</span></a>
+          <a href="#">Usados Citroën en Portillo <span>184 autos</span></a>
+        </div>
+        <div class="blogcard"><div class="tag">Financiamiento</div><h4>Simula tu cuota antes de visitarnos</h4><p>Financiamiento hasta 48 cuotas y toma de tu auto actual en parte de pago.</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>8</span><h3>Preguntas frecuentes</h3></div>
+      <details open><summary>¿Qué pasó con Clicar?</summary><p>Clicar ahora se dedica a la compra y venta B2B de vehículos. La venta de usados a público continúa en Portillo, con el mismo equipo, inspección y garantía.</p></details>
+      <details><summary>¿Compran autos para flotas de empresas?</summary><p>Sí, contamos con un equipo dedicado a cotizaciones de flotas.</p></details>
+      <details><summary>¿Puedo tomar mi auto actual como parte de pago?</summary><p>Sí, puedes tasarlo online o en sucursal.</p></details>
+    </div>
+
+    <div class="foot"><span>© Portillo &middot; parte de Grupo Americar</span><span>Stock más grande del grupo</span></div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- PDP — SALAZAR ISRAEL                                                     -->
+<!-- ======================================================================= -->
+<div class="panel" id="panel-pdp-sais">
+  <div class="frame site" style="--brand:#004c94; --brand-2:#0083b1; --liq:#c83884; --cuota:#0083b1; --promo:#c83884; --font-body:'Poppins'; --font-display:'Unbounded';">
+    <div class="frame-bar"><span></span><span></span><span></span><div class="frame-url">salazarisrael.cl/usados/kia-rio-2021-48213</div></div>
+    <div class="hdr">
+      <div class="logo"><div class="logo-mark mk-sais" style="--liq:#fcbe01;"></div><div class="logo-txt" style="--rule:linear-gradient(180deg,#0083b1 0 33%,#c83884 33% 66%,#fcbe01 66% 100%);"><b>Salazar Israel</b><i>USADOS</i></div></div>
+      <div class="nav"><span>Nuevos</span><span class="cur">Usados</span><span>Ofertas</span><span>Sucursales</span></div>
+    </div>
+    <div class="crumb">Inicio &rsaquo; Usados &rsaquo; Kia &rsaquo; <b>Kia Rio 2021</b></div>
+
+    <div class="pdp-hero">
+      <span class="annot" hidden style="position:absolute;margin:-6px 0 0 -6px;">1</span>
+      <div class="gallery">
+        <div class="gallery-main"><span class="g360">360° disponible</span><span class="gcount">1 / 24</span><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div>
+        <div class="thumbs"><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i></div>
+      </div>
+      <div class="pdp-info">
+        <span class="tipo">Sedán</span>
+        <span class="name"><b>Kia</b> Rio 1.4 EX AT 4P</span>
+        <span class="specs">2021 &middot; 61.400 Km &middot; Automático &middot; Bencina &middot; Único dueño</span>
+        <div class="pdp-price">
+          <div class="row1"><span class="was">$9.290.000</span><span class="save-pill">BAJÓ $1.100.000 &middot; −12%</span></div>
+          <div class="price"><span class="cur">$</span><span class="amt">8.190.000</span></div>
+          <div class="cuota"><span class="w">Cuota</span> $<span class="a">204.000*</span><span class="m">/36 meses</span></div>
+        </div>
+        <div class="pdp-cta">
+          <button class="btn btn-wa">WhatsApp</button>
+          <button class="btn btn-solid">Cotizar</button>
+          <button class="btn btn-outline">Reservar</button>
+          <button class="btn btn-outline">Agendar visita</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>2</span><h3>Confianza en este vehículo</h3></div>
+      <div class="trust-row">
+        <div class="trust-chip"><div class="ic">✓</div><div><b>200 puntos de inspección</b><span>Revisión mecánica, legal y estética antes de publicar</span></div></div>
+        <div class="trust-chip"><div class="ic">🛡</div><div><b>Garantía incluida</b><span>Cobertura base sin costo, ampliable al comprar</span></div></div>
+        <div class="trust-chip"><div class="ic">🚚</div><div><b>Traslado entre sucursales</b><span>Puedes recibirlo en la sucursal que prefieras</span></div></div>
+        <div class="trust-chip"><div class="ic">📄</div><div><b>Garantía de fábrica vigente</b><span>Aplica sobre componentes cubiertos por el fabricante</span></div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>3</span><h3>Garantía GarantiPLUS</h3></div>
+      <p class="sec-note" hidden>4 niveles de cobertura opcional al momento de comprar &mdash; refina lo visto en el Checklist de Entrega. "Excellence Light" es la recomendada por defecto.</p>
+      <div class="tier-grid">
+        <div class="tier-card"><h4>Acotada</h4><ul><li>Motor y caja</li><li>3 meses</li></ul></div>
+        <div class="tier-card"><h4>Expert</h4><ul><li>Motor, caja, dirección</li><li>6 meses</li></ul></div>
+        <div class="tier-card reco"><span class="reco-badge">RECOMENDADA</span><h4>Excellence Light</h4><ul><li>Cobertura extendida</li><li>12 meses</li><li>Asistencia en ruta</li></ul></div>
+        <div class="tier-card"><h4>Excellence Full</h4><ul><li>Cobertura total</li><li>24 meses</li><li>Vehículo de reemplazo</li></ul></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>4</span><h3>Opiniones de clientes</h3></div>
+      <p class="sec-note" hidden>Vía integración con Partoo, filtrado a reseñas de 4 y 5 estrellas de la sucursal donde está el vehículo.</p>
+      <div class="rating-row"><span class="rating-big">4.7</span><div><div class="stars">★★★★★</div><span style="font-size:11.5px;color:var(--g500);">1.240 opiniones en Google</span></div></div>
+      <div class="review-grid">
+        <div class="review-card"><span class="who">Marcela T.</span><span class="suc">Sucursal Ñuñoa</span><div class="stars">★★★★★</div><p>"El proceso de tasación de mi auto usado como parte de pago fue rápido y claro."</p></div>
+        <div class="review-card"><span class="who">Rodrigo P.</span><span class="suc">Sucursal Concepción</span><div class="stars">★★★★★</div><p>"Buena atención, me explicaron bien la garantía antes de firmar."</p></div>
+        <div class="review-card"><span class="who">Camila S.</span><span class="suc">Sucursal Providencia</span><div class="stars">★★★★☆</div><p>"El auto llegó como se veía en las fotos, coordinar el traslado tomó un par de días más."</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>5</span><h3>Ficha técnica</h3></div>
+      <p class="sec-note" hidden>49 campos en 6 grupos (antes 19 campos, 4 grupos). Cada grupo destaca 6 atributos antes de mostrar el resto.</p>
+      <details class="accgroup" open>
+        <summary>Especificaciones <span class="n">12 campos</span></summary>
+        <div class="destacados"><span>Motor 1.4L</span><span>100 hp</span><span>Automática 6 vel.</span><span>Tracción delantera</span><span>Rendimiento 15 km/l</span><span>Estanque 45 L</span></div>
+        <div class="rest">+ 6 campos más (cilindrada, torque, norma de emisión&hellip;)</div>
+      </details>
+      <details class="accgroup">
+        <summary>Interior <span class="n">9 campos</span></summary>
+        <div class="destacados"><span>Tapiz textil</span><span>A/C manual</span><span>Bluetooth</span><span>4 parlantes</span><span>Computador de a bordo</span><span>Alzavidrios eléctricos</span></div>
+        <div class="rest">+ 3 campos más</div>
+      </details>
+      <details class="accgroup">
+        <summary>Exterior <span class="n">8 campos</span></summary>
+        <div class="destacados"><span>Llantas de aleación</span><span>Faros LED</span><span>Espejos eléctricos</span><span>Color Gris Platinum</span><span>4 puertas</span><span>Antena tipo tiburón</span></div>
+        <div class="rest">+ 2 campos más</div>
+      </details>
+      <details class="accgroup">
+        <summary>Seguridad <span class="n">20 campos</span></summary>
+        <div class="destacados"><span>6 airbags</span><span>ABS + EBD</span><span>Control de estabilidad</span><span>ISOFIX</span><span>Cámara de retroceso</span><span>Sensores de estacionamiento</span></div>
+        <div class="rest">+ 14 campos más</div>
+      </details>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <span class="annot" hidden>6</span>
+        <h3>Transparencia e inspección <span class="status-pill review">EN REVISIÓN &middot; PILOTO SALAZAR ISRAEL</span></h3>
+      </div>
+      <p class="sec-note" hidden>Responde al pedido de "replicar el nivel de detalle de la web de subasta": muestra las 13 zonas a la vez (buenas y malas), a diferencia de Kavak que muestra un marcador a la vez. Fuente de datos (segunda inspección post-preparación) aún en diseño &mdash; esta sección no está confirmada, requiere validación con Alejandro Cousino.</p>
+      <div class="zone-grid">
+        <div class="zone-chip ok"><i></i>Parachoques delantero</div>
+        <div class="zone-chip ok"><i></i>Capó</div>
+        <div class="zone-chip warn"><i></i>Puerta del. izq.</div>
+        <div class="zone-chip ok"><i></i>Puerta del. der.</div>
+        <div class="zone-chip ok"><i></i>Puerta tras. izq.</div>
+        <div class="zone-chip ok"><i></i>Puerta tras. der.</div>
+        <div class="zone-chip warn"><i></i>Parabrisas</div>
+        <div class="zone-chip ok"><i></i>Techo</div>
+        <div class="zone-chip ok"><i></i>Maletero</div>
+        <div class="zone-chip ok"><i></i>Parachoques trasero</div>
+        <div class="zone-chip ok"><i></i>Llantas y neumáticos</div>
+        <div class="zone-chip ok"><i></i>Motor</div>
+        <div class="zone-chip ok"><i></i>Interior</div>
+      </div>
+      <div class="insp-notes">
+        <div class="insp-note"><div class="ph">📷</div><div><b>Puerta delantera izquierda</b><span>Rayón superficial de 4cm, sin afectar pintura base. Foto y nota del inspector disponibles.</span></div></div>
+        <div class="insp-note"><div class="ph">🛞</div><div><b>Desgaste de neumáticos</b><span>78% de vida útil promedio &mdash; dato que hoy Kavak no publica.</span></div></div>
+        <div class="insp-note"><div class="ph">⚙️</div><div><b>Códigos de diagnóstico ECU</b><span>Sin códigos activos al momento de la inspección.</span></div></div>
+        <div class="insp-note"><div class="ph">📋</div><div><b>Estado legal</b><span>Sin prohibiciones ni anotaciones vigentes.</span></div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>7</span><h3>Simulador financiero</h3></div>
+      <div class="sim-box">
+        <div class="sim-chips"><button>24 meses</button><button class="sel">36 meses</button><button>48 meses</button><button>60 meses</button></div>
+        <div class="sim-result"><div class="amt">$204.000<small style="font-size:13px;font-weight:600;">/mes</small></div><div class="lbl">Incluye CAE y pie legal &middot; sujeto a evaluación</div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>8</span><h3>Vehículos similares</h3></div>
+      <div class="similar-strip">
+        <div class="mini-card"><div class="mimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div><div class="mbody"><div class="name">Kia Rio 2020</div><div class="price"><span class="cur">$</span><span class="amt">7.590.000</span></div></div></div>
+        <div class="mini-card"><div class="mimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div><div class="mbody"><div class="name">Kia Rio 2022</div><div class="price"><span class="cur">$</span><span class="amt">9.290.000</span></div></div></div>
+        <div class="mini-card"><div class="mimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div><div class="mbody"><div class="name">Chevrolet Sail</div><div class="price"><span class="cur">$</span><span class="amt">8.490.000</span></div></div></div>
+      </div>
+      <div style="margin-top:20px;">
+        <details><summary>¿Qué pasó con Clicar?</summary><p>Clicar ahora se dedica a la compra y venta B2B. Esta ficha y su garantía continúan en Salazar Israel.</p></details>
+        <details><summary>¿Qué es GarantiPLUS?</summary><p>Es la garantía opcional ampliada que puedes elegir al momento de comprar, con 4 niveles de cobertura.</p></details>
+      </div>
+    </div>
+    <div class="foot"><span>© Salazar Israel &middot; parte de Grupo Americar</span><span>Publicado hace 12 días</span></div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- PDP — PORTILLO                                                           -->
+<!-- ======================================================================= -->
+<div class="panel" id="panel-pdp-portillo" hidden>
+  <div class="frame site" style="--brand:#0082d1; --brand-2:#6bc1ea; --liq:#005b96; --cuota:#0082d1; --promo:#005b96; --font-body:'Work Sans'; --font-display:'Work Sans';">
+    <div class="frame-bar"><span></span><span></span><span></span><div class="frame-url">portillo.cl/usados/nissan-versa-2022-91847</div></div>
+    <div class="hdr">
+      <div class="logo"><div class="logo-mark mk-portillo" style="--liq:#ffeb42;"></div><div class="logo-txt" style="--rule:linear-gradient(180deg,#6bc1ea 0 50%,#ffeb42 50% 100%);"><b>///Portillo</b><i>USADOS</i></div></div>
+      <div class="nav"><span>Nuevos</span><span class="cur">Usados</span><span>Flotas</span><span>Sucursales</span></div>
+    </div>
+    <div class="crumb">Inicio &rsaquo; Usados &rsaquo; Nissan &rsaquo; <b>Nissan Versa 2022</b></div>
+
+    <div class="pdp-hero">
+      <span class="annot" hidden style="position:absolute;margin:-6px 0 0 -6px;">1</span>
+      <div class="gallery">
+        <div class="gallery-main"><span class="g360">360° disponible</span><span class="gcount">1 / 21</span><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div>
+        <div class="thumbs"><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i><i><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></i></div>
+      </div>
+      <div class="pdp-info">
+        <span class="tipo">Sedán</span>
+        <span class="name"><b>Nissan</b> Versa 1.6 Sense AT</span>
+        <span class="specs">2022 &middot; 22.100 Km &middot; Automático &middot; Bencina &middot; Único dueño</span>
+        <div class="pdp-price">
+          <div class="row1"><span class="was">$10.890.000</span><span class="save-pill">BAJÓ $1.100.000 &middot; −10%</span></div>
+          <div class="price"><span class="cur">$</span><span class="amt">9.790.000</span></div>
+          <div class="cuota"><span class="w">Cuota</span> $<span class="a">173.900*</span><span class="m">/36 meses</span></div>
+        </div>
+        <div class="pdp-cta">
+          <button class="btn btn-wa">WhatsApp</button>
+          <button class="btn btn-solid">Cotizar</button>
+          <button class="btn btn-outline">Reservar</button>
+          <button class="btn btn-outline">Agendar visita</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>2</span><h3>Confianza en este vehículo</h3></div>
+      <div class="trust-row">
+        <div class="trust-chip"><div class="ic">✓</div><div><b>200 puntos de inspección</b><span>Revisión mecánica, legal y estética antes de publicar</span></div></div>
+        <div class="trust-chip"><div class="ic">🛡</div><div><b>Garantía incluida</b><span>Cobertura base sin costo, ampliable al comprar</span></div></div>
+        <div class="trust-chip"><div class="ic">🚚</div><div><b>Traslado entre sucursales</b><span>Puedes recibirlo en la sucursal que prefieras</span></div></div>
+        <div class="trust-chip"><div class="ic">📄</div><div><b>Garantía de fábrica vigente</b><span>Aplica sobre componentes cubiertos por el fabricante</span></div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>3</span><h3>Garantía GarantiPLUS</h3></div>
+      <p class="sec-note" hidden>4 niveles de cobertura opcional al momento de comprar. "Excellence Light" es la recomendada por defecto.</p>
+      <div class="tier-grid">
+        <div class="tier-card"><h4>Acotada</h4><ul><li>Motor y caja</li><li>3 meses</li></ul></div>
+        <div class="tier-card"><h4>Expert</h4><ul><li>Motor, caja, dirección</li><li>6 meses</li></ul></div>
+        <div class="tier-card reco"><span class="reco-badge">RECOMENDADA</span><h4>Excellence Light</h4><ul><li>Cobertura extendida</li><li>12 meses</li><li>Asistencia en ruta</li></ul></div>
+        <div class="tier-card"><h4>Excellence Full</h4><ul><li>Cobertura total</li><li>24 meses</li><li>Vehículo de reemplazo</li></ul></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>4</span><h3>Opiniones de clientes</h3></div>
+      <p class="sec-note" hidden>Vía integración con Partoo, filtrado a reseñas de 4 y 5 estrellas de la sucursal donde está el vehículo.</p>
+      <div class="rating-row"><span class="rating-big">4.6</span><div><div class="stars">★★★★★</div><span style="font-size:11.5px;color:var(--g500);">890 opiniones en Google</span></div></div>
+      <div class="review-grid">
+        <div class="review-card"><span class="who">Felipe A.</span><span class="suc">Sucursal Concepción</span><div class="stars">★★★★★</div><p>"Tomaron mi auto en parte de pago sin vueltas, todo online antes de ir a firmar."</p></div>
+        <div class="review-card"><span class="who">Daniela M.</span><span class="suc">Sucursal Temuco</span><div class="stars">★★★★★</div><p>"Cotizaron el financiamiento de flota de mi empresa rápido."</p></div>
+        <div class="review-card"><span class="who">Ignacio V.</span><span class="suc">Santiago Centro</span><div class="stars">★★★★☆</div><p>"Buen stock, se agendó la visita sin problema por WhatsApp."</p></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>5</span><h3>Ficha técnica</h3></div>
+      <p class="sec-note" hidden>49 campos en 6 grupos. Cada grupo destaca 6 atributos antes de mostrar el resto.</p>
+      <details class="accgroup" open>
+        <summary>Especificaciones <span class="n">12 campos</span></summary>
+        <div class="destacados"><span>Motor 1.6L</span><span>106 hp</span><span>CVT</span><span>Tracción delantera</span><span>Rendimiento 16 km/l</span><span>Estanque 41 L</span></div>
+        <div class="rest">+ 6 campos más</div>
+      </details>
+      <details class="accgroup">
+        <summary>Interior <span class="n">9 campos</span></summary>
+        <div class="destacados"><span>Tapiz textil</span><span>A/C automático</span><span>Android Auto/CarPlay</span><span>6 parlantes</span><span>Pantalla 8"</span><span>Alzavidrios eléctricos</span></div>
+        <div class="rest">+ 3 campos más</div>
+      </details>
+      <details class="accgroup">
+        <summary>Exterior <span class="n">8 campos</span></summary>
+        <div class="destacados"><span>Llantas de aleación</span><span>Faros LED</span><span>Espejos eléctricos</span><span>Color Blanco Nácar</span><span>4 puertas</span><span>Sensor de lluvia</span></div>
+        <div class="rest">+ 2 campos más</div>
+      </details>
+      <details class="accgroup">
+        <summary>Seguridad <span class="n">20 campos</span></summary>
+        <div class="destacados"><span>6 airbags</span><span>ABS + EBD</span><span>Control de estabilidad</span><span>ISOFIX</span><span>Cámara de retroceso</span><span>Alerta de colisión</span></div>
+        <div class="rest">+ 14 campos más</div>
+      </details>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <span class="annot" hidden>6</span>
+        <h3>Transparencia e inspección <span class="status-pill review">EN REVISIÓN &middot; PILOTO SALAZAR ISRAEL</span></h3>
+      </div>
+      <p class="sec-note" hidden>La propuesta se maquetó primero con Salazar Israel como marca piloto; esta vista muestra cómo se vería en Portillo si se extiende tras validar el piloto. Aún no confirmada con Alejandro Cousino.</p>
+      <div class="zone-grid">
+        <div class="zone-chip ok"><i></i>Parachoques delantero</div>
+        <div class="zone-chip ok"><i></i>Capó</div>
+        <div class="zone-chip ok"><i></i>Puerta del. izq.</div>
+        <div class="zone-chip warn"><i></i>Puerta del. der.</div>
+        <div class="zone-chip ok"><i></i>Puerta tras. izq.</div>
+        <div class="zone-chip ok"><i></i>Puerta tras. der.</div>
+        <div class="zone-chip ok"><i></i>Parabrisas</div>
+        <div class="zone-chip ok"><i></i>Techo</div>
+        <div class="zone-chip warn"><i></i>Maletero</div>
+        <div class="zone-chip ok"><i></i>Parachoques trasero</div>
+        <div class="zone-chip ok"><i></i>Llantas y neumáticos</div>
+        <div class="zone-chip ok"><i></i>Motor</div>
+        <div class="zone-chip ok"><i></i>Interior</div>
+      </div>
+      <div class="insp-notes">
+        <div class="insp-note"><div class="ph">📷</div><div><b>Puerta delantera derecha</b><span>Micro-rayón bajo manilla, no requiere repintado. Foto y nota del inspector disponibles.</span></div></div>
+        <div class="insp-note"><div class="ph">🛞</div><div><b>Desgaste de neumáticos</b><span>82% de vida útil promedio.</span></div></div>
+        <div class="insp-note"><div class="ph">⚙️</div><div><b>Códigos de diagnóstico ECU</b><span>Sin códigos activos al momento de la inspección.</span></div></div>
+        <div class="insp-note"><div class="ph">📋</div><div><b>Estado legal</b><span>Sin prohibiciones ni anotaciones vigentes.</span></div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>7</span><h3>Simulador financiero</h3></div>
+      <div class="sim-box">
+        <div class="sim-chips"><button>24 meses</button><button class="sel">36 meses</button><button>48 meses</button><button>60 meses</button></div>
+        <div class="sim-result"><div class="amt">$173.900<small style="font-size:13px;font-weight:600;">/mes</small></div><div class="lbl">Incluye CAE y pie legal &middot; sujeto a evaluación</div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>8</span><h3>Vehículos similares</h3></div>
+      <div class="similar-strip">
+        <div class="mini-card"><div class="mimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div><div class="mbody"><div class="name">Nissan Versa 2021</div><div class="price"><span class="cur">$</span><span class="amt">8.990.000</span></div></div></div>
+        <div class="mini-card"><div class="mimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div><div class="mbody"><div class="name">Nissan Versa 2023</div><div class="price"><span class="cur">$</span><span class="amt">10.890.000</span></div></div></div>
+        <div class="mini-card"><div class="mimg"><svg viewBox="0 0 64 34"><use href="#car-glyph"/></svg></div><div class="mbody"><div class="name">Peugeot 2008</div><div class="price"><span class="cur">$</span><span class="amt">12.490.000</span></div></div></div>
+      </div>
+      <div style="margin-top:20px;">
+        <details><summary>¿Qué pasó con Clicar?</summary><p>Clicar ahora se dedica a la compra y venta B2B. Esta ficha y su garantía continúan en Portillo.</p></details>
+        <details><summary>¿Qué es GarantiPLUS?</summary><p>Es la garantía opcional ampliada que puedes elegir al momento de comprar, con 4 niveles de cobertura.</p></details>
+      </div>
+    </div>
+    <div class="foot"><span>© Portillo &middot; parte de Grupo Americar</span><span>Publicado hace 8 días</span></div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- COTIZACIÓN — SALAZAR ISRAEL                                              -->
+<!-- ======================================================================= -->
+<div class="panel" id="panel-cot-sais" hidden>
+  <div class="frame site" style="--brand:#004c94; --brand-2:#0083b1; --liq:#c83884; --cuota:#0083b1; --promo:#c83884; --font-body:'Poppins'; --font-display:'Unbounded';">
+    <div class="frame-bar"><span></span><span></span><span></span><div class="frame-url">salazarisrael.cl/cotizar/kia-rio-2021-48213</div></div>
+    <div class="hdr">
+      <div class="logo"><div class="logo-mark mk-sais" style="--liq:#fcbe01;"></div><div class="logo-txt" style="--rule:linear-gradient(180deg,#0083b1 0 33%,#c83884 33% 66%,#fcbe01 66% 100%);"><b>Salazar Israel</b><i>USADOS</i></div></div>
+      <div class="nav"><span>Nuevos</span><span class="cur">Usados</span><span>Ofertas</span><span>Sucursales</span></div>
+    </div>
+    <div class="crumb">Inicio &rsaquo; Usados &rsaquo; Kia Rio 2021 &rsaquo; <b>Cotización</b></div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>1</span><h3>Paso 1 &middot; Contacto</h3></div>
+      <p class="sec-note" hidden>Antes: flujo lineal de 5 pasos (score 4.6/10). Ahora: un solo formulario obligatorio, luego todo es opcional.</p>
+      <div class="flow-cols">
+        <div class="flow-step">
+          <div class="step-lbl">Formulario de contacto</div>
+          <div class="mini-form">
+            <div class="mini-field"><label>Nombre completo</label><div class="box">Joaquín Cáceres</div></div>
+            <div class="mini-field"><label>RUT</label><div class="box">12.345.678-9</div></div>
+            <div class="mini-field"><label>Teléfono</label><div class="box">+56 9 1234 5678</div></div>
+            <button class="btn btn-solid" style="margin-top:4px;">Continuar</button>
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-lbl">Paso 2 &middot; Confirmación</div>
+          <span class="annot" hidden style="position:absolute;margin:-8px 0 0 -8px;">2</span>
+          <div class="hub-confirm">
+            <div class="check">✓</div>
+            <div>
+              <h4>¡Listo, Joaquín!</h4>
+              <p>Dejamos registrada tu cotización del Kia Rio 2021. Puedes cerrar esta página o elegir qué hacer ahora.</p>
+              <span class="ref-chip">REF-SI-48213</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>3</span><h3>Hub de decisión</h3></div>
+      <p class="sec-note" hidden>3 herramientas independientes, en cualquier orden. El usuario puede cerrar el flujo sin usar ninguna.</p>
+      <div class="hub-grid">
+        <div class="hub-card"><div class="ic">🚗</div><h4>Tasar tu auto actual</h4><p>Súmalo como parte de pago para este vehículo.</p><button class="btn btn-outline">Tasar ahora</button></div>
+        <div class="hub-card"><div class="ic">💳</div><h4>Solicitar financiamiento</h4><p>Simula tu cuota y obtén una pre-aprobación en línea.</p><button class="btn btn-outline">Simular financiamiento</button></div>
+        <div class="hub-card"><span class="term">Cierra el flujo</span><div class="ic">📅</div><h4>Agendar visita</h4><p>Ve y prueba el auto en la sucursal que prefieras.</p><button class="btn btn-solid">Agendar</button></div>
+      </div>
+      <div class="hub-exit">&larr; Volver al catálogo</div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>4</span><h3>Después de usar una herramienta: bottom sheet dinámico</h3></div>
+      <p class="sec-note" hidden>Ejemplo: el usuario ya usó "Tasar tu auto". El bottom sheet muestra solo las 2 herramientas restantes.</p>
+      <div class="sheet-mock">
+        <div class="handle"><i></i></div>
+        <h5>¿Qué más quieres hacer?</h5>
+        <div class="sheet-row"><div class="ic">💳</div>Solicitar financiamiento<span class="arrow">›</span></div>
+        <div class="sheet-row"><div class="ic">📅</div>Agendar visita<span class="arrow">›</span></div>
+      </div>
+    </div>
+    <div class="foot"><span>© Salazar Israel &middot; parte de Grupo Americar</span><span>Modelo MVP1 &middot; Constanza Araya, jul-2026</span></div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- COTIZACIÓN — PORTILLO                                                    -->
+<!-- ======================================================================= -->
+<div class="panel" id="panel-cot-portillo" hidden>
+  <div class="frame site" style="--brand:#0082d1; --brand-2:#6bc1ea; --liq:#005b96; --cuota:#0082d1; --promo:#005b96; --font-body:'Work Sans'; --font-display:'Work Sans';">
+    <div class="frame-bar"><span></span><span></span><span></span><div class="frame-url">portillo.cl/cotizar/nissan-versa-2022-91847</div></div>
+    <div class="hdr">
+      <div class="logo"><div class="logo-mark mk-portillo" style="--liq:#ffeb42;"></div><div class="logo-txt" style="--rule:linear-gradient(180deg,#6bc1ea 0 50%,#ffeb42 50% 100%);"><b>///Portillo</b><i>USADOS</i></div></div>
+      <div class="nav"><span>Nuevos</span><span class="cur">Usados</span><span>Flotas</span><span>Sucursales</span></div>
+    </div>
+    <div class="crumb">Inicio &rsaquo; Usados &rsaquo; Nissan Versa 2022 &rsaquo; <b>Cotización</b></div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>1</span><h3>Paso 1 &middot; Contacto</h3></div>
+      <p class="sec-note" hidden>Antes: flujo lineal de 5 pasos (score 4.6/10). Ahora: un solo formulario obligatorio, luego todo es opcional.</p>
+      <div class="flow-cols">
+        <div class="flow-step">
+          <div class="step-lbl">Formulario de contacto</div>
+          <div class="mini-form">
+            <div class="mini-field"><label>Nombre completo</label><div class="box">Joaquín Cáceres</div></div>
+            <div class="mini-field"><label>RUT</label><div class="box">12.345.678-9</div></div>
+            <div class="mini-field"><label>Teléfono</label><div class="box">+56 9 1234 5678</div></div>
+            <button class="btn btn-solid" style="margin-top:4px;">Continuar</button>
+          </div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="step-lbl">Paso 2 &middot; Confirmación</div>
+          <span class="annot" hidden style="position:absolute;margin:-8px 0 0 -8px;">2</span>
+          <div class="hub-confirm">
+            <div class="check">✓</div>
+            <div>
+              <h4>¡Listo, Joaquín!</h4>
+              <p>Dejamos registrada tu cotización del Nissan Versa 2022. Puedes cerrar esta página o elegir qué hacer ahora.</p>
+              <span class="ref-chip">REF-PO-91847</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>3</span><h3>Hub de decisión</h3></div>
+      <p class="sec-note" hidden>3 herramientas independientes, en cualquier orden. Si el vehículo no es elegible para financiamiento, esa tarjeta desaparece del hub.</p>
+      <div class="hub-grid">
+        <div class="hub-card"><div class="ic">🚗</div><h4>Tasar tu auto actual</h4><p>Súmalo como parte de pago para este vehículo.</p><button class="btn btn-outline">Tasar ahora</button></div>
+        <div class="hub-card"><div class="ic">💳</div><h4>Solicitar financiamiento</h4><p>Simula tu cuota y obtén una pre-aprobación en línea.</p><button class="btn btn-outline">Simular financiamiento</button></div>
+        <div class="hub-card"><span class="term">Cierra el flujo</span><div class="ic">📅</div><h4>Agendar visita</h4><p>Ve y prueba el auto en la sucursal que prefieras.</p><button class="btn btn-solid">Agendar</button></div>
+      </div>
+      <div class="hub-exit">&larr; Volver al catálogo</div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>4</span><h3>Después de usar una herramienta: bottom sheet dinámico</h3></div>
+      <p class="sec-note" hidden>Ejemplo: el usuario ya usó "Tasar tu auto". El bottom sheet muestra solo las 2 herramientas restantes.</p>
+      <div class="sheet-mock">
+        <div class="handle"><i></i></div>
+        <h5>¿Qué más quieres hacer?</h5>
+        <div class="sheet-row"><div class="ic">💳</div>Solicitar financiamiento<span class="arrow">›</span></div>
+        <div class="sheet-row"><div class="ic">📅</div>Agendar visita<span class="arrow">›</span></div>
+      </div>
+    </div>
+    <div class="foot"><span>© Portillo &middot; parte de Grupo Americar</span><span>Modelo MVP1 &middot; Constanza Araya, jul-2026</span></div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- TASACIÓN — SALAZAR ISRAEL                                                -->
+<!-- ======================================================================= -->
+<div class="panel" id="panel-tas-sais" hidden>
+  <div class="frame site" style="--brand:#004c94; --brand-2:#0083b1; --liq:#c83884; --cuota:#0083b1; --promo:#c83884; --font-body:'Poppins'; --font-display:'Unbounded';">
+    <div class="frame-bar"><span></span><span></span><span></span><div class="frame-url">salazarisrael.cl/tasa-tu-auto</div></div>
+    <div class="hdr">
+      <div class="logo"><div class="logo-mark mk-sais" style="--liq:#fcbe01;"></div><div class="logo-txt" style="--rule:linear-gradient(180deg,#0083b1 0 33%,#c83884 33% 66%,#fcbe01 66% 100%);"><b>Salazar Israel</b><i>USADOS</i></div></div>
+      <div class="nav"><span>Nuevos</span><span class="cur">Usados</span><span>Ofertas</span><span>Sucursales</span></div>
+    </div>
+    <div class="crumb">Inicio &rsaquo; Usados &rsaquo; <b>Tasa tu auto</b></div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>1</span><h3>Tasa tu auto en 3 minutos</h3></div>
+      <p style="margin:0; font-size:13.5px; color:var(--stone); max-width:60ch; line-height:1.55;">Úsalo como parte de pago en tu próximo vehículo. Te mostramos si tu auto califica antes de pedirte cualquier dato.</p>
+      <div class="elig-row">
+        <div class="elig-chip">✓ Antigüedad hasta 15 años</div>
+        <div class="elig-chip">✓ Kilometraje razonable</div>
+        <div class="elig-chip">✓ Documentación al día</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>2</span><h3>Datos de tu vehículo</h3></div>
+      <p class="sec-note" hidden>Buscador tipeable (no dropdown estático), patente/VIN autocompleta marca/modelo/año, campos editables sin bloquear el flujo.</p>
+      <div class="tas-form">
+        <div class="tas-field"><label>Patente o VIN</label><div class="box">GJ&middot;KL&middot;21 <span class="ph">&middot; autocompleta abajo</span></div></div>
+        <div class="tas-field"><label>Marca</label><div class="box">Toyota <span class="ph">▾</span></div></div>
+        <div class="tas-field"><label>Modelo</label><div class="box">Corolla Cross <span class="ph">▾</span></div></div>
+        <div class="tas-field"><label>Año</label><div class="box">2020 <span class="ph">▾</span></div></div>
+        <div class="tas-field"><label>Kilometraje exacto</label><div class="box">54.200 km</div></div>
+        <div class="tas-field"><label>RUT</label><div class="box">12.345.678-9 <span class="ph">✓</span></div></div>
+        <div class="tas-field"><label>Teléfono</label><div class="box">+56 9 1234 5678</div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>3</span><h3>Agenda tu visita</h3></div>
+      <div class="cal-mock">
+        <div class="cal-grid">
+          <div class="dow">L</div><div class="dow">M</div><div class="dow">M</div><div class="dow">J</div><div class="dow">V</div><div class="dow">S</div><div class="dow">D</div>
+          <div class="cal-day off">28</div><div class="cal-day off">29</div><div class="cal-day off">30</div><div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day off">4</div>
+          <div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day sel">7</div><div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day off">11</div>
+        </div>
+        <div class="hour-chips">
+          <div class="step-lbl">Horas disponibles &mdash; miércoles 7</div>
+          <div class="row"><button>09:00</button><button class="sel">10:30</button><button>12:00</button><button>15:00</button><button>16:30</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>4</span><h3>Resultado</h3></div>
+      <p class="sec-note" hidden>Dos estados posibles según el vehículo. "Mostrar precio antes de pedir datos de contacto" sigue como oportunidad de diferenciación, no implementada aún.</p>
+      <div class="result-grid">
+        <div class="result-card">
+          <span class="tag" style="color:#0b6b3d;">Estado A &middot; Tasación automática</span>
+          <div class="amt">$7.800.000 &ndash; $8.400.000</div>
+          <p>Rango estimado para tu Toyota Corolla Cross 2020. Puedes usarlo como parte de pago del Kia Rio 2021.</p>
+          <button class="btn btn-solid" style="width:100%;">Usar como parte de pago</button>
+        </div>
+        <div class="result-card">
+          <span class="tag" style="color:var(--warn);">Estado B &middot; Revisión manual</span>
+          <div class="amt" style="font-size:16px;">En revisión en sucursal</div>
+          <p>Tu vehículo requiere una revisión presencial para tasarlo. Te contactaremos en menos de 24h.</p>
+          <button class="btn btn-outline" style="width:100%;">Agendar revisión</button>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:18px;"><span style="font-size:13px; font-weight:700; color:var(--brand);">Explora tu próximo auto &rsaquo;</span></div>
+    </div>
+    <div class="foot"><span>© Salazar Israel &middot; parte de Grupo Americar</span><span>Flujo mejor evaluado del grupo (22.5/25, may-2026)</span></div>
+  </div>
+</div>
+
+<!-- ======================================================================= -->
+<!-- TASACIÓN — PORTILLO                                                      -->
+<!-- ======================================================================= -->
+<div class="panel" id="panel-tas-portillo" hidden>
+  <div class="frame site" style="--brand:#0082d1; --brand-2:#6bc1ea; --liq:#005b96; --cuota:#0082d1; --promo:#005b96; --font-body:'Work Sans'; --font-display:'Work Sans';">
+    <div class="frame-bar"><span></span><span></span><span></span><div class="frame-url">portillo.cl/tasa-tu-auto</div></div>
+    <div class="hdr">
+      <div class="logo"><div class="logo-mark mk-portillo" style="--liq:#ffeb42;"></div><div class="logo-txt" style="--rule:linear-gradient(180deg,#6bc1ea 0 50%,#ffeb42 50% 100%);"><b>///Portillo</b><i>USADOS</i></div></div>
+      <div class="nav"><span>Nuevos</span><span class="cur">Usados</span><span>Flotas</span><span>Sucursales</span></div>
+    </div>
+    <div class="crumb">Inicio &rsaquo; Usados &rsaquo; <b>Tasa tu auto</b></div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>1</span><h3>Tasa tu auto en 3 minutos</h3></div>
+      <p style="margin:0; font-size:13.5px; color:var(--stone); max-width:60ch; line-height:1.55;">Úsalo como parte de pago en tu próximo vehículo, o como parte de una cotización de flota. Te mostramos si califica antes de pedirte cualquier dato.</p>
+      <div class="elig-row">
+        <div class="elig-chip">✓ Antigüedad hasta 15 años</div>
+        <div class="elig-chip">✓ Kilometraje razonable</div>
+        <div class="elig-chip">✓ Documentación al día</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>2</span><h3>Datos de tu vehículo</h3></div>
+      <p class="sec-note" hidden>Buscador tipeable (no dropdown estático), patente/VIN autocompleta marca/modelo/año, campos editables sin bloquear el flujo.</p>
+      <div class="tas-form">
+        <div class="tas-field"><label>Patente o VIN</label><div class="box">HT&middot;RS&middot;44 <span class="ph">&middot; autocompleta abajo</span></div></div>
+        <div class="tas-field"><label>Marca</label><div class="box">Suzuki <span class="ph">▾</span></div></div>
+        <div class="tas-field"><label>Modelo</label><div class="box">Swift</div></div>
+        <div class="tas-field"><label>Año</label><div class="box">2019 <span class="ph">▾</span></div></div>
+        <div class="tas-field"><label>Kilometraje exacto</label><div class="box">68.900 km</div></div>
+        <div class="tas-field"><label>RUT</label><div class="box">9.876.543-2 <span class="ph">✓</span></div></div>
+        <div class="tas-field"><label>Teléfono</label><div class="box">+56 9 8765 4321</div></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>3</span><h3>Agenda tu visita</h3></div>
+      <div class="cal-mock">
+        <div class="cal-grid">
+          <div class="dow">L</div><div class="dow">M</div><div class="dow">M</div><div class="dow">J</div><div class="dow">V</div><div class="dow">S</div><div class="dow">D</div>
+          <div class="cal-day off">28</div><div class="cal-day off">29</div><div class="cal-day off">30</div><div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div><div class="cal-day off">4</div>
+          <div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day sel">8</div><div class="cal-day">9</div><div class="cal-day">10</div><div class="cal-day off">11</div>
+        </div>
+        <div class="hour-chips">
+          <div class="step-lbl">Horas disponibles &mdash; jueves 8</div>
+          <div class="row"><button>09:00</button><button>10:30</button><button class="sel">12:00</button><button>15:00</button><button>16:30</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><span class="annot" hidden>4</span><h3>Resultado</h3></div>
+      <p class="sec-note" hidden>Dos estados posibles según el vehículo. "Mostrar precio antes de pedir datos de contacto" sigue como oportunidad de diferenciación, no implementada aún.</p>
+      <div class="result-grid">
+        <div class="result-card">
+          <span class="tag" style="color:#0b6b3d;">Estado A &middot; Tasación automática</span>
+          <div class="amt">$4.900.000 &ndash; $5.300.000</div>
+          <p>Rango estimado para tu Suzuki Swift 2019. Puedes usarlo como parte de pago del Nissan Versa 2022.</p>
+          <button class="btn btn-solid" style="width:100%;">Usar como parte de pago</button>
+        </div>
+        <div class="result-card">
+          <span class="tag" style="color:var(--warn);">Estado B &middot; Revisión manual</span>
+          <div class="amt" style="font-size:16px;">En revisión en sucursal</div>
+          <p>Tu vehículo requiere una revisión presencial para tasarlo. Te contactaremos en menos de 24h.</p>
+          <button class="btn btn-outline" style="width:100%;">Agendar revisión</button>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:18px;"><span style="font-size:13px; font-weight:700; color:var(--brand);">Explora tu próximo auto &rsaquo;</span></div>
+    </div>
+    <div class="foot"><span>© Portillo &middot; parte de Grupo Americar</span><span>Flujo mejor evaluado del grupo (22.5/25, may-2026)</span></div>
+  </div>
+</div>
+
+<script>
+  var state = { tp: 'home', brand: 'sais' };
+  var TPS = ['home','pdp','cot','tas'];
+  var BRANDS = ['sais','portillo'];
+
+  function render(){
+    TPS.forEach(function(tp){
+      document.getElementById('tab-' + tp).setAttribute('aria-selected', String(tp === state.tp));
+      document.getElementById('legend-' + tp).hidden = (tp !== state.tp) || !annotOn;
+    });
+    document.getElementById('tab-sais').setAttribute('aria-selected', String(state.brand === 'sais'));
+    document.getElementById('tab-portillo').setAttribute('aria-selected', String(state.brand === 'portillo'));
+    TPS.forEach(function(tp){
+      BRANDS.forEach(function(b){
+        var el = document.getElementById('panel-' + tp + '-' + b);
+        if(el) el.hidden = !(tp === state.tp && b === state.brand);
+      });
+    });
+    try{ history.replaceState(null, '', '#' + state.tp + '-' + state.brand); }catch(e){}
+  }
+  function setTP(tp){ state.tp = tp; render(); }
+  function setBrand(b){ state.brand = b; render(); }
+
+  var annotOn = false;
+  function toggleAnnot(on){
+    annotOn = on;
+    document.querySelectorAll('.annot').forEach(function(el){ el.hidden = !on; });
+    document.querySelectorAll('.sec-note').forEach(function(el){ el.hidden = !on; });
+    render();
+  }
+
+  (function init(){
+    try{
+      var h = (location.hash || '').replace('#','');
+      var parts = h.split('-');
+      if(parts.length === 2 && TPS.indexOf(parts[0]) !== -1 && BRANDS.indexOf(parts[1]) !== -1){
+        state.tp = parts[0]; state.brand = parts[1];
+      }
+    }catch(e){}
+    render();
+  })();
+</script>
+
+</body>
+</html>
